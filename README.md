@@ -24,7 +24,7 @@ npx skills add caidanw/skills@<skill-name>
 
 | Skill | Description |
 | --- | --- |
-| *Coming soon* | New skills will be added here |
+| [`modern-css`](./modern-css/) | Write modern CSS using native features instead of legacy hacks, workarounds, and JavaScript. 64 old-vs-modern comparisons across layout, animation, color, typography, selectors, and workflow — organized by browser support tier. |
 
 ## Creating a Skill
 

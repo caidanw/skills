@@ -1,0 +1,13 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node (in case any skills bundle scripts)
+node_modules/

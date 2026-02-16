@@ -17,6 +17,10 @@ native replacements. This skill ensures you always reach for the modern approach
 **Reference:** [modern-css.com](https://modern-css.com/) — all techniques sourced from
 this site. Visit individual pages for live demos and deeper explanations.
 
+**Support data:** Browser support percentages represent global user coverage from
+[caniuse.com](https://caniuse.com), last updated **February 2026**. These numbers shift as
+browsers release updates — verify on caniuse if precision matters for a project.
+
 ## How to Use This Skill
 
 When writing or reviewing CSS:
@@ -27,6 +31,9 @@ When writing or reviewing CSS:
    newly available and let the user decide. Offer a fallback if relevant.
 3. **Ask first** before using *Limited Availability* techniques (<80% support). Warn about
    browser support and suggest a progressive-enhancement approach or fallback.
+4. **If the user has legacy browser requirements** (e.g. older Safari, corporate browsers),
+   ask before using any technique — even Widely Available ones — since support percentages
+   assume modern browser versions. Use `@supports` to provide fallbacks.
 
 When you see old CSS patterns in existing code, point them out and suggest the modern
 replacement with a brief explanation of why it's better.
@@ -1050,8 +1057,18 @@ When writing any CSS, follow these guiding principles:
    runtime, work with JS, and cascade. Sass variables compile away.
 5. **Cascade layers over specificity hacks** — Use `@layer` to organize your cascade.
    Stop using `!important` or deep nesting to win specificity battles.
-6. **Progressive enhancement** — Use modern features with fallbacks. `@supports` can
-   gate newer properties.
+6. **Progressive enhancement** — Use modern features with fallbacks. Use `@supports` to
+   gate Newly Available and Limited features behind capability checks:
+   ```css
+   /* fallback for older browsers */
+   .card { display: flex; flex-wrap: wrap; }
+
+   /* modern upgrade */
+   @supports (container-type: inline-size) {
+     .wrapper { container-type: inline-size; }
+     @container (width > 400px) { .card { flex-direction: row; } }
+   }
+   ```
 
 ## Quick Decision Guide
 

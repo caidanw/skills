@@ -214,21 +214,6 @@ dialog::backdrop { background: rgb(0 0 0 / .5); }
 
 [Reference →](https://modern-css.com/modal-dialogs-without-a-javascript-library/)
 
-#### Dropdown menus — `[popover]`
-
-```css
-/* OLD: display:none + JS toggle + click-outside + ESC */
-.menu { display: none; }
-.menu.open { display: block; }
-
-/* MODERN: popover attribute */
-/* <button popovertarget="menu">Toggle</button> */
-/* <div id="menu" popover>...</div> */
-#menu[popover] { position: absolute; }
-```
-
-[Reference →](https://modern-css.com/dropdown-menus-without-javascript-toggles/)
-
 #### Direction-aware layouts — logical properties
 
 ```css
@@ -438,17 +423,6 @@ h1 { font-size: clamp(1rem, 2.5vw, 2rem); }
 
 [Reference →](https://modern-css.com/drop-caps-without-float-hacks/)
 
-#### Balanced headlines — `text-wrap: balance`
-
-```css
-/* OLD: manual <br> tags or Balance-Text.js */
-
-/* MODERN: text-wrap balance */
-h1, h2 { text-wrap: balance; }
-```
-
-[Reference →](https://modern-css.com/balanced-headlines-without-manual-line-breaks/)
-
 #### Font loading — `font-display: swap`
 
 ```css
@@ -616,6 +590,21 @@ mention the support level, and offer a fallback if needed.
 
 ### Layout
 
+#### Dropdown menus — `[popover]` (86%)
+
+```css
+/* OLD: display:none + JS toggle + click-outside + ESC */
+.menu { display: none; }
+.menu.open { display: block; }
+
+/* MODERN: popover attribute */
+/* <button popovertarget="menu">Toggle</button> */
+/* <div id="menu" popover>...</div> */
+#menu[popover] { position: absolute; }
+```
+
+[Reference →](https://modern-css.com/dropdown-menus-without-javascript-toggles/)
+
 #### Subgrid — align nested grids to parent tracks (88%)
 
 ```css
@@ -631,6 +620,21 @@ mention the support level, and offer a fallback if needed.
 
 [Reference →](https://modern-css.com/aligning-nested-grids-without-duplicating-tracks/)
 
+#### Customizable selects — `appearance: base-select` (86%)
+
+```css
+/* OLD: Select2 or Choices.js replacing native select */
+
+/* MODERN: base-select unlocks full styling */
+select, select ::picker(select) {
+  appearance: base-select;
+}
+```
+
+Note: support is expanding rapidly — verify current status on
+[caniuse](https://caniuse.com/css-appearance).
+[Reference →](https://modern-css.com/customizable-selects-without-a-javascript-library/)
+
 #### Hover tooltips — `popover=hint` + `interestfor` (86%)
 
 ```html
@@ -642,30 +646,6 @@ mention the support level, and offer a fallback if needed.
 ```
 
 [Reference →](https://modern-css.com/hover-tooltips-without-javascript-events/)
-
-#### Modal controls — `commandfor` (72%, but newly shipping)
-
-```html
-<!-- OLD: onclick handler to call showModal() -->
-<button onclick="document.querySelector('#dlg').showModal()">Open</button>
-
-<!-- MODERN: declarative command -->
-<button commandfor="dlg" command="show-modal">Open</button>
-<dialog id="dlg">...</dialog>
-```
-
-[Reference →](https://modern-css.com/modal-controls-without-onclick-handlers/)
-
-#### Dialog light dismiss — `closedby="any"` (72%, but newly shipping)
-
-```html
-<!-- OLD: JS click listener checking click bounds -->
-
-<!-- MODERN: closedby attribute -->
-<dialog closedby="any">Click outside to close</dialog>
-```
-
-[Reference →](https://modern-css.com/dialog-light-dismiss-without-click-outside-listeners/)
 
 ### Animation
 
@@ -804,19 +784,16 @@ input:user-valid { border-color: green; }
 
 ### Typography
 
-#### Vertical text centering — `text-box` (79%, but shipping rapidly)
+#### Balanced headlines — `text-wrap: balance` (87%)
 
 ```css
-/* OLD: uneven padding hacks for optical centering */
-.btn { padding: 10px 20px; padding-top: 8px; /* hack */ }
+/* OLD: manual <br> tags or Balance-Text.js */
 
-/* MODERN: text-box trims leading/trailing space */
-h1, button {
-  text-box: trim-both cap alphabetic;
-}
+/* MODERN: text-wrap balance */
+h1, h2 { text-wrap: balance; }
 ```
 
-[Reference →](https://modern-css.com/vertical-text-centering-without-padding-hacks/)
+[Reference →](https://modern-css.com/balanced-headlines-without-manual-line-breaks/)
 
 ---
 
@@ -826,6 +803,32 @@ These are cutting-edge CSS features. **Always ask the user** before using them, 
 about browser support, and suggest fallbacks or progressive enhancement strategies.
 
 ### Layout
+
+#### Modal controls — `commandfor` (72%)
+
+```html
+<!-- OLD: onclick handler to call showModal() -->
+<button onclick="document.querySelector('#dlg').showModal()">Open</button>
+
+<!-- MODERN: declarative command -->
+<button commandfor="dlg" command="show-modal">Open</button>
+<dialog id="dlg">...</dialog>
+```
+
+Fallback: use a small JS onclick handler to call `dialog.showModal()`.
+[Reference →](https://modern-css.com/modal-controls-without-onclick-handlers/)
+
+#### Dialog light dismiss — `closedby="any"` (72%)
+
+```html
+<!-- OLD: JS click listener checking click bounds -->
+
+<!-- MODERN: closedby attribute -->
+<dialog closedby="any">Click outside to close</dialog>
+```
+
+Fallback: add a click listener on `::backdrop` to call `dialog.close()`.
+[Reference →](https://modern-css.com/dialog-light-dismiss-without-click-outside-listeners/)
 
 #### Anchor positioning — `position-anchor` + `anchor()` (77%)
 
@@ -842,20 +845,6 @@ about browser support, and suggest fallbacks or progressive enhancement strategi
 
 Fallback: use Floating UI or absolute positioning with JS.
 [Reference →](https://modern-css.com/tooltip-positioning-without-javascript/)
-
-#### Customizable selects — `appearance: base-select` (newly shipping, verify support)
-
-```css
-/* OLD: Select2 or Choices.js replacing native select */
-
-/* MODERN: base-select unlocks full styling */
-select, select ::picker(select) {
-  appearance: base-select;
-}
-```
-
-Fallback: use a JS select library or unstyled native select.
-[Reference →](https://modern-css.com/customizable-selects-without-a-javascript-library/)
 
 #### Carousel controls — `::scroll-button` / `::scroll-marker` (72%)
 
@@ -953,6 +942,21 @@ Fallback: use IntersectionObserver to toggle a class.
 [Reference →](https://modern-css.com/sticky-snapped-styling-without-javascript/)
 
 ### Typography
+
+#### Vertical text centering — `text-box` (79%)
+
+```css
+/* OLD: uneven padding hacks for optical centering */
+.btn { padding: 10px 20px; padding-top: 8px; /* hack */ }
+
+/* MODERN: text-box trims leading/trailing space */
+h1, button {
+  text-box: trim-both cap alphabetic;
+}
+```
+
+Fallback: use manual padding adjustments.
+[Reference →](https://modern-css.com/vertical-text-centering-without-padding-hacks/)
 
 #### Auto-growing textarea — `field-sizing: content` (73%)
 

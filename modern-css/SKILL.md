@@ -1080,22 +1080,23 @@ When writing any CSS, follow these guiding principles:
 | Pin a header on scroll                | `position: sticky; top: 0`                  |
 | Responsive component                  | `@container` query                          |
 | Create a modal                        | `<dialog>` element                          |
-| Create a dropdown                     | `[popover]` attribute                       |
+| Create a dropdown                     | `[popover]` attribute 🟡                    |
 | Select parent based on child          | `:has()` selector                           |
 | Style keyboard focus only             | `:focus-visible`                            |
 | Fluid font size                       | `clamp(min, preferred, max)`                |
 | Truncate multiline text               | `line-clamp: N`                             |
-| Balance headline wrapping             | `text-wrap: balance`                        |
+| Balance headline wrapping             | `text-wrap: balance` 🟡                     |
 | Animate on scroll                     | `animation-timeline: view()` ⚠️             |
-| Page transitions                      | View Transitions API                        |
-| Animate into view                     | `@starting-style`                           |
+| Page transitions                      | View Transitions API 🟡                     |
+| Animate into view                     | `@starting-style` 🟡                        |
 | Create color palette from one color   | `oklch()` with adjusted lightness           |
-| Mix two colors                        | `color-mix(in oklch, ...)`                  |
-| Dark mode colors                      | `light-dark()` + `color-scheme`             |
-| Scope styles to a component           | `@scope (.component)`                       |
+| Mix two colors                        | `color-mix(in oklch, ...)` 🟡               |
+| Dark mode colors                      | `light-dark()` + `color-scheme` 🟡          |
+| Scope styles to a component           | `@scope (.component)` 🟡                    |
 | Control cascade order                 | `@layer`                                    |
 | Nest selectors                        | Native CSS nesting `& selector`             |
 | Type a custom property                | `@property`                                 |
 | Position a tooltip                    | CSS anchor positioning ⚠️                   |
 
-*⚠️ = Limited availability. Ask the user about browser support requirements first.*
+*No marker = Widely Available (90%+, always use).
+🟡 = Newly Available (80–90%, suggest to user). ⚠️ = Limited (<80%, ask first).*

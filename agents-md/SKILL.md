@@ -35,13 +35,13 @@ The most immediately useful section. Concrete commands, not prose.
 
 ```markdown
 ## Commands
-- Install: `pnpm install`
-- Dev server: `pnpm dev`
-- Test single file: `pnpm vitest run path/to/test.ts`
-- Test all: `pnpm test`
-- Lint: `pnpm lint`
-- Format: `pnpm format`
-- Type check: `pnpm typecheck`
+- Install: `npm install`
+- Dev server: `npm run dev`
+- Test single file: `npx vitest run path/to/test.ts`
+- Test all: `npm test`
+- Lint: `npm run lint`
+- Format: `npm run format`
+- Type check: `npm run typecheck`
 ```
 
 Include any prerequisites or non-obvious setup. If the project uses Docker, Nix, or
@@ -100,7 +100,7 @@ How to run tests, where they live, patterns to follow, what to cover.
 - Use `describe`/`it` blocks, not `test()`
 - Mock external services, never hit real APIs in tests
 - New features require tests — cover success, failure, and edge cases
-- Run relevant tests before submitting: `pnpm vitest run src/path/`
+- Run relevant tests before submitting: `npx vitest run src/path/`
 ```
 
 ### 6. PR & Commit Conventions
@@ -109,7 +109,7 @@ How to run tests, where they live, patterns to follow, what to cover.
 ## Commits & PRs
 - Conventional commits: `feat:`, `fix:`, `refactor:`, `test:`, `docs:`
 - PR title format: `type(scope): description`
-- Run `pnpm lint && pnpm test` before committing
+- Run `npm run lint && npm test` before committing
 - Keep PRs focused — one logical change per PR
 ```
 

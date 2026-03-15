@@ -104,6 +104,8 @@ const updated = { ...user, name: newName }
 const result = items.reduce((acc, item) => ({ ...acc, [item.id]: item }), {})
 ```
 
+**The real test: does the mutation escape the current scope?** Mutating a local variable inside a function is always fine. Mutating shared state or arguments passed in is almost always a bug waiting to happen.
+
 Use `readonly` where it prevents real bugs — public API return types, shared config, state that shouldn't be touched.
 
 ```ts
@@ -135,17 +137,22 @@ interface AsyncState<T> {
 }
 ```
 
-If you `switch` on a discriminant at runtime, your types should mirror that structure:
+If you `switch` on a discriminant at runtime, your types should mirror that structure. Use `never` in the default to ensure exhaustive handling — the compiler catches missing cases:
 
 ```ts
 type Shape =
   | { kind: "circle"; radius: number }
   | { kind: "rect"; width: number; height: number }
 
+function assertNever(x: never): never {
+  throw new Error(`Unexpected value: ${x}`)
+}
+
 function area(s: Shape): number {
   switch (s.kind) {
     case "circle": return Math.PI * s.radius ** 2
     case "rect": return s.width * s.height
+    default: return assertNever(s) // compile error if a case is missing
   }
 }
 ```
@@ -235,28 +242,33 @@ function pick<T, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
 type DeepPartialConditionalMappedInferredNested<T> = ...
 ```
 
-Use `interface` for object shapes (better error messages, extendable). Use `type` for unions, intersections, and computed types.
+Default to `type`. Use `interface` when you need `extends` — it creates cached, flat object types that the compiler checks faster than `&` intersections. Avoid `interface` as a default because declaration merging (two interfaces with the same name silently merge) causes surprising bugs.
 
 ```ts
-// interface for objects
-interface User {
+// type by default — for objects, unions, aliases, computed types
+type User = {
   id: UserId
   name: string
   email: EmailAddress
   status: Status
 }
 
-// type for unions and aliases
 type AsyncResult<T> = AsyncState<T>
 type UserInput = Omit<User, "id">
 type Handler = (req: Request) => Promise<Response>
+
+// interface when you need extends — faster than & intersections
+interface HttpError extends Error {
+  status: number
+  body: unknown
+}
 ```
 
 Use `unknown` over `any`. Narrow with type guards.
 
-## 8. Factory Pattern Over Classes
+## 8. Factory Functions by Default, Classes When Earned
 
-For configurable, composable objects — use factory functions with closures instead of classes. Reserve classes for wrapping resources (DB connections, WebSocket, streams).
+Use factory functions with closures for configurable, composable objects. Reserve classes for: wrapping resources (DB connections, WebSocket, streams), fluent/chainable APIs (builders, schema validators like Zod), and `Disposable` objects used with `using`.
 
 ```ts
 // Factory — simple, composable, no `this` headaches
@@ -340,20 +352,20 @@ async function resolve<T>(input: Resolvable<T>): Promise<T> {
 
 ## What NOT to Do
 
-- **No classes unless wrapping a resource** (DB connection, WebSocket). Use factory functions + plain objects.
-- **No `enum`** — use union types or `as const` objects.
-- **No `namespace`** — use modules.
+- **No `enum`** — use union types or `as const` objects. Enums emit runtime code (non-erasable syntax), break Node's native TS support, and conflict with the "types as comments" future. TS 5.8's `--erasableSyntaxOnly` flag officially marks them as discouraged.
+- **No `namespace`** — use modules. Also non-erasable.
 - **No `I` prefix on interfaces** — just name the thing.
-- **No monads, functors, or applicatives** — this isn't Haskell.
+- **No FP ceremony or jargon** — no monads, functors, or applicatives by name. But use practical FP patterns: Result types, pipe composition, exhaustive matching (see `ts-pattern`).
 - **No unnecessary abstraction** — three similar lines beats a premature `createGenericHandler`.
 - **No `any`** — use `unknown` and narrow, or fix the type.
-- **No barrel files with circular re-exports** — keep the dependency graph clean.
-- **No npm packages for 10 lines of code** — inline tiny utils.
+- **No barrel files with circular re-exports** — they explode module graphs, kill tree-shaking, and slow bundlers/test runners. One barrel at a package root is fine; barrels in every subdirectory are not.
+- **No npm packages for 10 lines of code** — inline tiny utils. (Zod, Hono, ts-pattern all ship zero dependencies.)
 
 ## Style
 
 - `const` everywhere. `let` only for genuine reassignment.
-- `interface` for object shapes, `type` for unions and computed types.
+- `type` by default. `interface` only for `extends`. (See Section 7.)
+- Declare return types on top-level exported functions — helps AI assistants, compilation performance, and API clarity. Skip for JSX components.
 - Destructure in params when it helps: `({ id, name }: User) => ...`
 - Optional chaining and nullish coalescing: `user?.address?.city ?? "Unknown"`
 - `function` keyword for named, exported functions. Arrows for inline callbacks and short helpers.
@@ -361,3 +373,8 @@ async function resolve<T>(input: Resolvable<T>): Promise<T> {
 - Template literals over string concatenation.
 - `as const` to preserve literal types.
 - `satisfies` to validate shape while preserving inference.
+- Consider `--erasableSyntaxOnly` — disables enums, namespaces, and parameter properties. Aligns with Node's native TS support and the "types as comments" TC39 proposal.
+
+For modern TypeScript features (`using`, `NoInfer`, `const` type params), see [references/modern-features.md](references/modern-features.md).
+For compilation performance tips, see [references/performance.md](references/performance.md).
+For patterns from top codebases (Zod, tRPC, Hono, TanStack), see [references/patterns-in-the-wild.md](references/patterns-in-the-wild.md).

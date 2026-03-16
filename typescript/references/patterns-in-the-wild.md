@@ -171,6 +171,74 @@ const app = new Hono()
 
 **Pattern:** Each middleware returns a new type that extends the previous context. The final handler has access to all accumulated types.
 
+## Schema Validation: Zod vs Valibot
+
+Zod pioneered TypeScript-first schema validation, but **Valibot** is the modern alternative for bundle-sensitive contexts: 95% smaller, 20x faster, fully tree-shakeable.
+
+```ts
+// Valibot — modular, tree-shakeable
+import * as v from "valibot"
+
+const UserSchema = v.object({
+  email: v.pipe(v.string(), v.email()),
+  age: v.pipe(v.number(), v.minValue(18)),
+})
+
+type User = v.InferOutput<typeof UserSchema>
+```
+
+Both implement the **Standard Schema** interface, so downstream tools can accept either without adapters. Use Zod for mature ecosystem/integrations. Use Valibot when bundle size matters (client-side, serverless, edge).
+
+## Module Augmentation
+
+Extend third-party types without modifying the original package. Essential for adding context to middleware, ORMs, or framework objects:
+
+```ts
+// Extend Express Request with your own user type
+declare module "express" {
+  interface Request {
+    user?: User
+  }
+}
+
+// Now req.user is typed everywhere
+app.get("/me", (req, res) => {
+  if (req.user) res.json(req.user)
+})
+```
+
+**When to use:** Adding typed context to framework objects, extending library types with project-specific fields, polyfilling missing type definitions.
+
+## Type-Safe Event Emitters
+
+Map event names to their payload types. Prevents mismatched emit/listen calls:
+
+```ts
+type Events = {
+  "user:created": { id: string; name: string }
+  "user:deleted": { id: string }
+}
+
+class TypedEmitter<T extends Record<string, unknown>> {
+  private handlers = new Map<keyof T, Set<Function>>()
+
+  on<K extends keyof T>(event: K, handler: (data: T[K]) => void): void {
+    if (!this.handlers.has(event)) this.handlers.set(event, new Set())
+    this.handlers.get(event)!.add(handler)
+  }
+
+  emit<K extends keyof T>(event: K, data: T[K]): void {
+    this.handlers.get(event)?.forEach(fn => fn(data))
+  }
+}
+
+const bus = new TypedEmitter<Events>()
+bus.on("user:created", (data) => console.log(data.name)) // typed!
+bus.emit("user:created", { id: "1", name: "Alice" })     // validated!
+```
+
+**When to use:** Custom event buses, pub/sub systems, plugin architectures — anywhere events cross module boundaries.
+
 ## Sources
 
 - [Zod](https://github.com/colinhacks/zod) — Schema validation, chainable class API
@@ -179,5 +247,7 @@ const app = new Hono()
 - [TanStack Query](https://github.com/TanStack/query) — Async state as discriminated unions
 - [ts-pattern](https://github.com/gvergnaud/ts-pattern) — Exhaustive pattern matching
 - [neverthrow](https://github.com/supermacro/neverthrow) — Result types without FP jargon
+- [Valibot](https://valibot.dev) — Modular, tree-shakeable schema validation
+- [Standard Schema](https://standardschema.dev) — Unified validation interface
 - [Matt Pocock / Total TypeScript](https://www.totaltypescript.com) — type vs interface, return types, erasableSyntaxOnly
 - [TypeScript Performance Wiki](https://github.com/microsoft/TypeScript/wiki/Performance) — Compilation performance

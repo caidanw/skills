@@ -144,6 +144,94 @@ Marks enums, namespaces, and class parameter properties as errors. These are "no
 - Aligns with the TC39 "types as comments" proposal
 - Forces you toward union types, modules, and explicit class fields — which are better patterns anyway
 
+## Type Narrowing Patterns
+
+TypeScript narrows types through control flow analysis. These patterns are essential for working with `unknown`, union types, and nullable values.
+
+### Type Predicates (`is`)
+
+Custom narrowing functions that tell TypeScript which type a value is:
+
+```ts
+function isNonNull<T>(val: T | null | undefined): val is T {
+  return val != null
+}
+
+// Narrows arrays: (string | null)[] → string[]
+const names = rawNames.filter(isNonNull)
+
+// Narrows in if blocks
+function processEvent(event: MouseEvent | KeyboardEvent) {
+  if (isKeyboardEvent(event)) {
+    console.log(event.key) // typed as KeyboardEvent
+  }
+}
+
+function isKeyboardEvent(e: Event): e is KeyboardEvent {
+  return "key" in e
+}
+```
+
+### Assertion Functions (`asserts`)
+
+Narrow by throwing — useful for validation at boundaries:
+
+```ts
+function assertDefined<T>(val: T | undefined, msg: string): asserts val is T {
+  if (val === undefined) throw new Error(msg)
+}
+
+function assertString(val: unknown): asserts val is string {
+  if (typeof val !== "string") throw new TypeError(`Expected string, got ${typeof val}`)
+}
+
+// After the assertion, TypeScript knows the type
+const env = process.env.DATABASE_URL
+assertDefined(env, "DATABASE_URL is required")
+// env is now `string`, not `string | undefined`
+```
+
+### `in` Operator Narrowing
+
+Check for property existence to narrow union types:
+
+```ts
+type Fish = { swim: () => void }
+type Bird = { fly: () => void }
+
+function move(animal: Fish | Bird) {
+  if ("swim" in animal) {
+    animal.swim() // narrowed to Fish
+  } else {
+    animal.fly()  // narrowed to Bird
+  }
+}
+```
+
+### `Error.cause` for Error Chaining (ES2022)
+
+Preserve the original error when wrapping with a higher-level message:
+
+```ts
+async function loadUser(id: string): Promise<User> {
+  try {
+    const res = await fetch(`/api/users/${id}`)
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    return await res.json()
+  } catch (err) {
+    throw new Error(`Failed to load user ${id}`, { cause: err })
+  }
+}
+
+// Debugging: the full chain is accessible
+try {
+  await loadUser("123")
+} catch (err) {
+  console.error(err)       // "Failed to load user 123"
+  console.error(err.cause) // "HTTP 404" (or network error, etc.)
+}
+```
+
 ## Import Attributes (TS 5.3+)
 
 Replaces the deprecated `assert` syntax for imports:

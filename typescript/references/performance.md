@@ -78,6 +78,24 @@ interface ImgElement extends HtmlElement { tag: "img"; src: string }
 function render(el: HtmlElement) { /* ... */ }
 ```
 
+### Method Syntax vs Function Property Syntax (Variance)
+
+Method shorthand syntax is **bivariant** (unsafe), while function property syntax is **contravariant** (safe) under `strictFunctionTypes`. This matters for generic interfaces:
+
+```ts
+// Bivariant — method syntax skips variance checks
+interface UnsafeComparer<T> {
+  compare(a: T, b: T): number  // allows unsound assignments
+}
+
+// Contravariant — function property syntax is checked properly
+interface SafeComparer<T> {
+  compare: (a: T, b: T) => number  // catches type errors
+}
+```
+
+**Why:** TypeScript deliberately exempts methods from strict variance checks for backward compatibility (e.g., `Array<T>`'s methods). Use function property syntax in your own interfaces when type safety matters.
+
 ## tsconfig Performance Settings
 
 ```jsonc

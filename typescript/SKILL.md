@@ -401,6 +401,7 @@ Concrete pitfalls that cause runtime bugs despite passing type checks:
 - **No `any`** — use `unknown` and narrow, or fix the type.
 - **No barrel files with circular re-exports** — they explode module graphs, kill tree-shaking, and slow bundlers/test runners. One barrel at a package root is fine; barrels in every subdirectory are not.
 - **No npm packages for 10 lines of code** — inline tiny utils. (Zod, Hono, ts-pattern all ship zero dependencies.)
+- **No unsanitized user input** in SQL queries, HTML output, shell commands, or file paths. AI-generated code contains security vulnerabilities ~40% of the time. Validate and sanitize at every system boundary.
 
 ## Style
 

@@ -83,7 +83,7 @@ type ButtonProps = {
 
 ## 2. Design Tokens
 
-Structure tokens in three layers. Primitive tokens define raw values. Semantic tokens assign meaning. Component tokens bind to specific elements.
+Structure tokens in two layers. Primitive tokens define raw values. Semantic tokens assign meaning. Use semantic tokens directly in components — don't add a third "component token" layer unless you're building a white-label product with per-customer theming.
 
 ```css
 /* Layer 1: Primitive — raw values, no meaning */
@@ -93,16 +93,11 @@ Structure tokens in three layers. Primitive tokens define raw values. Semantic t
 --radius-sm: 0.25rem;
 --radius-md: 0.5rem;
 
-/* Layer 2: Semantic — assigned meaning */
+/* Layer 2: Semantic — assigned meaning, used directly in components */
 --color-background: var(--color-gray-50);
 --color-foreground: var(--color-gray-900);
 --color-primary: var(--color-blue-500);
 --radius-default: var(--radius-md);
-
-/* Layer 3: Component — specific binding */
---button-bg: var(--color-primary);
---button-radius: var(--radius-default);
---card-bg: var(--color-background);
 ```
 
 **Why OKLCH over HSL:** Perceptually uniform (same lightness looks the same across hues), supports P3 wide-gamut displays, produces better gradients without muddy midpoints.

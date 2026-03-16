@@ -1,6 +1,6 @@
 # Design Token System
 
-Complete implementation of the 3-layer token system referenced in SKILL.md. All examples use plain CSS custom properties — adapt to Tailwind `@theme`, StyleX variables, or Panda tokens as needed.
+Token system implementation referenced in SKILL.md. Two layers: primitive (raw values) and semantic (assigned meaning). Use semantic tokens directly in components — a third "component token" layer is rarely needed and adds indirection without value. All examples use plain CSS custom properties — adapt to Tailwind `@theme`, StyleX variables, or Panda tokens as needed.
 
 ## Color Tokens
 

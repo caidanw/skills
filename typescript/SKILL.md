@@ -264,7 +264,20 @@ interface HttpError extends Error {
 }
 ```
 
-Use `unknown` over `any`. Narrow with type guards.
+Use `unknown` over `any`. Narrow with type guards:
+
+```ts
+// Type predicates — narrow in .filter(), if blocks, etc.
+function isString(val: unknown): val is string {
+  return typeof val === "string"
+}
+const strings = mixed.filter(isString) // string[]
+
+// Assertion functions — narrow or throw
+function assertDefined<T>(val: T | undefined, msg: string): asserts val is T {
+  if (val === undefined) throw new Error(msg)
+}
+```
 
 ## 8. Factory Functions by Default, Classes When Earned
 
@@ -338,6 +351,23 @@ function parseConfig(raw: string): Result<Config, string> {
 }
 ```
 
+### Error Handling
+
+Always type catch block errors as `unknown`, then narrow. Use `Error.cause` for chaining context through layers.
+
+```ts
+try {
+  await fetchData()
+} catch (err) {
+  if (err instanceof Error) {
+    throw new Error("Failed to load data", { cause: err })
+  }
+  throw err
+}
+```
+
+Use Result types for expected failures (Section 9 above). Use `throw` for truly unexpected errors. Don't mix — pick one strategy per boundary.
+
 ### Resolvable Values
 
 One type for lazy/async/sync values — useful for config, subcommands, anything expensive:
@@ -349,6 +379,17 @@ async function resolve<T>(input: Resolvable<T>): Promise<T> {
   return typeof input === "function" ? (input as Function)() : input
 }
 ```
+
+## 10. Common Gotchas
+
+Concrete pitfalls that cause runtime bugs despite passing type checks:
+
+- **`Object.keys()` returns `string[]`**, not `(keyof T)[]`. TypeScript can't guarantee an object doesn't have extra keys at runtime. Cast explicitly when safe: `Object.keys(obj) as Array<keyof typeof obj>`.
+- **`.filter()` doesn't narrow** without a type predicate. Use `.filter((x): x is T => x !== null)` instead of `.filter(x => x !== null)`.
+- **Catch blocks: errors are `unknown`**, not `Error`. Always narrow: `catch (err) { if (err instanceof Error) ... }`.
+- **`{}` matches any non-nullish value** — including strings, numbers, and booleans. Use `Record<string, unknown>` for "some object" and `unknown` for "anything."
+- **Type widening in conditionals**: `cond ? "a" : "b"` infers as `string`, not `"a" | "b"`. Use `as const` on the branches if you need literals.
+- **Method syntax is bivariant**: `{ compare(a: T): number }` skips contravariance checks. Use function property syntax `{ compare: (a: T) => number }` for type safety under `strictFunctionTypes`.
 
 ## What NOT to Do
 
@@ -373,6 +414,7 @@ async function resolve<T>(input: Resolvable<T>): Promise<T> {
 - Template literals over string concatenation.
 - `as const` to preserve literal types.
 - `satisfies` to validate shape while preserving inference.
+- Enable `noUncheckedIndexedAccess` — makes array/object index access return `T | undefined`, catching unsafe assumptions like `arr[0]` or `env.NODE_ENV`.
 - Consider `--erasableSyntaxOnly` — disables enums, namespaces, and parameter properties. Aligns with Node's native TS support and the "types as comments" TC39 proposal.
 
 For modern TypeScript features (`using`, `NoInfer`, `const` type params), see [references/modern-features.md](references/modern-features.md).

@@ -58,6 +58,30 @@ Use this as the default GitHub workflow for low-experience users:
 Do not teach users to routinely rebase pushed PR branches just to get the latest `main`.
 That workflow is where many novices re-introduce old code or lose work.
 
+## Opening PRs
+
+When helping a user open a PR, treat the PR title as the likely final squash-merge commit.
+
+- Write the title so it reads well on `main` after `Squash and merge`.
+- Use a concise Conventional Commit style title when the repo uses that convention.
+- Describe the final outcome, not the implementation journey or review process.
+- Avoid titles like `WIP`, `fix stuff`, `address comments`, or `update branch`.
+
+Good default patterns:
+
+- `feat: add <skill-name> skill`
+- `feat(<skill-name>): add <capability>`
+- `fix(<skill-name>): correct <problem>`
+- `docs: document <policy or workflow>`
+
+For the PR body:
+
+- briefly state what changed
+- briefly state why it changed
+- mention testing or validation if relevant
+
+If the repo uses GitHub squash merges, prefer the PR title as the default squash commit message.
+
 ## Sync Decision Tree
 
 - **Need the latest `main` on a feature branch?** Use `fetch`, then merge `origin/main` into the
@@ -127,6 +151,7 @@ When asked how to support this workflow at the repo level, recommend:
 - enable `Squash and merge`
 - disable `Rebase and merge`
 - optionally disable regular merge commits if the team wants squash-only history
+- set the default squash commit message to `Pull request title`
 - auto-delete head branches after merge
 
 For repo policy details, read `references/repo-settings.md`.

@@ -17,10 +17,26 @@ For this workflow, recommend:
 
 - enable `Squash and merge`
 - disable `Rebase and merge`
+- set the default squash commit message to `Pull request title`
 
 Optional:
 
 - disable regular merge commits if the team wants every PR to become one clean commit on `main`
+
+## Default Squash Commit Message
+
+Recommend `Pull request title` as the default squash commit message.
+
+Why:
+
+- it keeps `main` concise and scannable
+- it reinforces the habit that the PR title should read like the final commit on `main`
+- it avoids noisy commit-by-commit detail from feature branches
+- it works well with Conventional Commit-style PR titles
+
+Avoid `Pull request title and commit details` for this workflow because it defeats much of the cleanliness benefit of squash merges.
+
+`Pull request title and description` can work for disciplined teams, but it often produces overly long squash commits for novice-heavy workflows.
 
 ## Why Squash Merge Fits This Skill
 

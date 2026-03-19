@@ -24,6 +24,7 @@ npx skills add caidanw/skills@<skill-name>
 
 | Skill | Description |
 | --- | --- |
+| [`git-safe-pr-workflow`](./git-safe-pr-workflow/) | Safe GitHub PR workflow for low-experience Git users. Guides agents toward merge-based branch sync, squash merges, conflict resolution, and recovery from bad rebases without polluting `main`. |
 | [`modern-css`](./modern-css/) | Write modern CSS using native features instead of legacy hacks, workarounds, and JavaScript. 64 old-vs-modern comparisons across layout, animation, color, typography, selectors, and workflow — organized by browser support tier. |
 
 ## Creating a Skill

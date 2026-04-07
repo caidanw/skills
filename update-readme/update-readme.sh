@@ -1,27 +1,3 @@
----
-name: update-readme
-description: Use when adding, removing, or renaming a skill in this repository to keep the Available Skills table in README.md current.
----
-
-# Update README
-
-After any change to a skill's `name`, `description`, or directory, regenerate the Available Skills table by running the script below from the repo root:
-
-```bash
-bash update-readme/update-readme.sh
-```
-
-## When to run
-
-- After adding a new skill directory
-- After editing the `name` or `description` field in any `SKILL.md`
-- After renaming or deleting a skill directory
-
-## Script
-
-Save as `update-readme/update-readme.sh`:
-
-```bash
 #!/usr/bin/env bash
 # Regenerates the Available Skills table in README.md from SKILL.md frontmatters.
 # Usage: bash update-readme/update-readme.sh
@@ -118,4 +94,3 @@ awk -v table="$table_file" '
 
 count=$(wc -l < "$skills_file" | tr -d ' ')
 echo "✓ Updated README.md with $count skills"
-```

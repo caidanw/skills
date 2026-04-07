@@ -26,8 +26,8 @@ npx skills add caidanw/skills@<skill-name>
 | Skill | Description |
 | --- | --- |
 | [`agent-first-repo`](./agent-first-repo/) | Structure a repository and its documentation so AI coding agents can work effectively. |
-| [`agents-md`](./agents-md/) | Write effective AGENTS.md files that give coding agents the context they need to work in a repository. |
-| [`architecture-md`](./architecture-md/) | Generate an ARCHITECTURE.md file for a codebase following matklad's principles. |
+| [`agents-md`](./agents-md/) | Write effective AGENTS. |
+| [`architecture-md`](./architecture-md/) | Generate an ARCHITECTURE. |
 | [`behavioral-testing`](./behavioral-testing/) | Behavioral testing methodology — test what users experience, not how code is structured. |
 | [`code-comments`](./code-comments/) | Write high-signal code comments for humans and coding agents. |
 | [`design-system`](./design-system/) | Build design system components and UI that are accessible, themeable, and visually polished. |
@@ -42,7 +42,7 @@ npx skills add caidanw/skills@<skill-name>
 | [`Technical Writing`](./tech-writing/) | Write clean, terse technical docs — commits, issues, PRDs, specs, and technical communication |
 | [`TypeScript`](./typescript/) | Write clean, pragmatically functional TypeScript — simple, composable, soundly typed |
 | [`typescript-refactoring`](./typescript-refactoring/) | Systematically refactor TypeScript codebases for readability, type safety, and AI-friendliness. |
-| [`update-readme`](./update-readme/) | Use when adding, removing, or renaming a skill in this repository to keep the Available Skills table in README.md current. |
+| [`update-readme`](./update-readme/) | Use when adding, removing, or renaming a skill in this repository to keep the Available Skills table in README. |
 <!-- skills-end -->
 
 ## Creating a Skill

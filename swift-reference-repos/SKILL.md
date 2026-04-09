@@ -1,123 +1,137 @@
 ---
 name: swift-reference-repos
-description: "Curated Swift/macOS reference repositories for flow-based node graph UIs (AudioKit/Flow), SwiftUI component patterns (SwiftUIX), and terminal emulator embedding (Ghostty + Ghostling/libghostty). Use this skill when: building node-based visual editors or flow programming UIs in Swift, needing SwiftUI component examples or gap-filling patterns for macOS/iOS, embedding terminal emulators via libghostty, looking for exemplary Swift codebases to study or clone as scaffolding, or needing to understand how production-grade Swift projects structure their code. Also trigger when the user mentions 'clone a reference repo', 'node editor in Swift', 'SwiftUI component library', 'libghostty', 'Ghostling', 'AudioKit Flow', or asks for Swift architectural patterns. This skill is designed to be used by coding agents that need to clone and study these repos as working references."
+description: "Curated production-grade Swift/AppKit reference repositories for macOS desktop app development. Covers: CodeEdit (22k stars, full IDE with NSSplitView, NSToolbar, sidebar+editor+inspector layout, custom view embedding, AppKit+SwiftUI hybrid), STTextView (1.3k stars, TextKit 2 custom NSView with plugin architecture, gutter views, cross-platform AppKit/UIKit), and Ghostty/Ghostling (30k stars, terminal emulator embedding via libghostty C API, Metal rendering, multi-threaded architecture). Also includes detailed WKWebView embedding patterns for canvas-style compositors. Use this skill when: building macOS desktop apps with AppKit, embedding WKWebView or custom NSViews into a canvas/compositor, working with NSSplitView or multi-pane layouts, building AppKit+SwiftUI hybrid architectures, creating custom NSView subclasses, embedding terminal emulators via libghostty, needing Swift↔JavaScript bridging via WKWebView, working with NSToolbar/NSWindow/NSViewController patterns, or needing to clone and study exemplary Swift desktop codebases. Also trigger when the user mentions 'clone a reference repo', 'AppKit patterns', 'WKWebView embedding', 'NSSplitView', 'desktop app architecture', or asks for macOS-native development patterns."
 ---
 
-# Swift Reference Repositories
+# Swift macOS Desktop App Reference Repositories
 
-Three curated, production-quality Swift repositories that serve as architectural references and clonable scaffolding for macOS/iOS development. Each repo is MIT-licensed and actively maintained.
+Three production-grade, MIT-licensed Swift repositories that serve as architectural references for building native macOS desktop applications. Focused on AppKit, custom view embedding, compositor-style layouts, and hybrid AppKit+SwiftUI patterns.
 
 ## Quick Reference
 
-| Repo | Purpose | Clone URL | Stars | License |
-|------|---------|-----------|-------|---------|
-| AudioKit/Flow | SwiftUI node graph editor | `https://github.com/AudioKit/Flow.git` | ~388 | MIT |
-| SwiftUIX/SwiftUIX | SwiftUI component library | `https://github.com/SwiftUIX/SwiftUIX.git` | ~7,947 | MIT |
-| ghostty-org/ghostty | Terminal emulator + libghostty | `https://github.com/ghostty-org/ghostty.git` | ~30k+ | MIT |
-| ghostty-org/ghostling | Minimal libghostty C API demo | `https://github.com/ghostty-org/ghostling.git` | new | MIT |
+| Repo | Purpose | Stars | What It Teaches |
+|------|---------|-------|-----------------|
+| CodeEditApp/CodeEdit | Full macOS IDE | ~22k | NSSplitView, sidebar+editor+inspector, NSToolbar, custom view embedding, AppKit+SwiftUI hybrid |
+| krzyzanowskim/STTextView | TextKit 2 text component | ~1.3k | Custom NSView subclass, plugin architecture, gutter/ruler, cross-platform AppKit+UIKit |
+| ghostty-org/ghostty + ghostling | Terminal emulator + libghostty | ~30k | C library embedding in Swift, Metal rendering, multi-threaded terminal, AppKit surface lifecycle |
 
-## When to Clone Each Repo
+Plus: WKWebView embedding patterns for canvas-style compositors (see `references/wkwebview-embedding.md`).
 
-### AudioKit/Flow — Flow-Based Programming UI
-**Clone when:** Building any node-based visual editor, signal flow diagram, data pipeline visualizer, workflow builder, or visual programming environment in Swift/SwiftUI.
+---
 
+## 1. CodeEdit — macOS Desktop IDE Architecture
+
+**Clone:** `git clone --depth 1 https://github.com/CodeEditApp/CodeEdit.git`
+**License:** MIT | **Language:** Swift | **Target:** macOS 13+
+
+The single best open-source reference for building a complex macOS desktop app. 22k+ stars, active development, and a codebase that demonstrates nearly every AppKit pattern you'll need.
+
+**Read:** `references/codeedit.md` for detailed source map and patterns.
+
+**Key patterns this repo teaches:**
+- **AppKit+SwiftUI hybrid architecture** — AppKit owns window lifecycle, toolbar, and split view; SwiftUI owns sidebar content, inspectors, settings
+- **NSSplitView for multi-pane layouts** — Sidebar + editor area + inspector, with collapsible panes and drag handles
+- **NSToolbar** — Programmatic toolbar with customizable items
+- **Custom NSView embedding** — Embeds CodeEditTextView (a custom NSView) inside SwiftUI via NSViewRepresentable
+- **NSHostingView / NSHostingController** — Embedding SwiftUI views inside AppKit containers
+- **Window management** — NSWindowController, NSDocument-based architecture
+- **Tree-sitter integration** — FFI to a C library for syntax highlighting (similar pattern to libghostty)
+- **Tab management** — Custom tab bar implementation
+- **File browser sidebar** — NSOutlineView-style recursive tree
+
+### Related CodeEdit repos (study together):
+- `CodeEditApp/CodeEditTextView` — Pure AppKit text view, NSView subclass, no SwiftUI
+- `CodeEditApp/CodeEditSourceEditor` — Source editor wrapping CodeEditTextView with tree-sitter
+- `CodeEditApp/CodeEditLanguages` — Tree-sitter grammar integration
+
+---
+
+## 2. STTextView — Custom NSView Component Patterns
+
+**Clone:** `git clone --depth 1 https://github.com/krzyzanowskim/STTextView.git`
+**License:** BSD-style | **Language:** Swift | **Target:** macOS 12+, iOS 16+
+
+The definitive example of building a production-quality custom NSView subclass. Created as an NSTextView/UITextView replacement using TextKit 2, it demonstrates every pattern you need for building embeddable AppKit components.
+
+**Read:** `references/sttextview.md` for detailed source map and patterns.
+
+**Key patterns this repo teaches:**
+- **Custom NSView subclass architecture** — Proper init, layout, drawing, event handling
+- **Plugin system** — STPlugin protocol for extending view behavior without subclassing
+- **Gutter/ruler views** — NSRulerView-style line number gutters alongside content
+- **Cross-platform architecture** — Same API surface for AppKit and UIKit via platform-specific implementations sharing common code
+- **TextKit 2** — NSTextLayoutManager, NSTextContentStorage, fragment-based layout
+- **Coordinator pattern** — For bridging complex AppKit state into SwiftUI
+- **SwiftUI wrapping** — How to wrap a complex AppKit view for SwiftUI consumption
+
+---
+
+## 3. Ghostty + Ghostling — Terminal Embedding & C Library Integration
+
+**Clone:**
 ```bash
-git clone https://github.com/AudioKit/Flow.git
+git clone --depth 1 https://github.com/ghostty-org/ghostty.git
+git clone --depth 1 https://github.com/ghostty-org/ghostling.git
 ```
+**License:** MIT | **Languages:** Zig (core), Swift (macOS app), C (API/demo)
 
-**What you'll learn:** Read `references/audiokit-flow.md` for detailed architecture.
+The reference for embedding a high-performance C library into a macOS AppKit app. Ghostty's macOS frontend is a Swift/AppKit app that consumes the Zig-compiled libghostty via C API.
 
-Key patterns this repo teaches:
-- SwiftUI node graph rendering with draggable nodes and wire connections
-- `Patch` / `Node` / `Wire` data model for representing directed graphs
-- Hit testing and interaction on a canvas of connected nodes
-- Recursive layout algorithms for auto-positioning node graphs
-- SPM package structure for a reusable SwiftUI component
+**Read:** `references/ghostty.md` for detailed source map and patterns.
 
-### SwiftUIX/SwiftUIX — Component Library
-**Clone when:** You need SwiftUI components that Apple hasn't shipped yet, want to study how to bridge UIKit/AppKit into SwiftUI properly, or need patterns for building a cross-platform component library.
+**Key patterns these repos teach:**
+- **C library consumption from Swift** — Bridging headers, C function calls, callback registration
+- **NSView subclass hosting a render surface** — SurfaceView.swift wraps a CAMetalLayer-backed view
+- **Multi-threaded view architecture** — IO thread + render thread per embedded view
+- **AppKit event forwarding** — Keyboard and mouse events forwarded from NSView to C library
+- **Metal rendering inside NSView** — CAMetalLayer setup, drawable lifecycle, frame synchronization
+- **Ghostling (~600 lines of C)** — Minimal complete example of consuming the libghostty-vt C API
 
-```bash
-git clone https://github.com/SwiftUIX/SwiftUIX.git
-```
+---
 
-**What you'll learn:** Read `references/swiftuix.md` for detailed architecture.
+## 4. WKWebView Embedding Patterns
 
-Key patterns this repo teaches:
-- Bridging AppKit (`NSView`) and UIKit (`UIView`) into SwiftUI via `NSViewRepresentable`/`UIViewRepresentable`
-- Cross-platform abstractions that compile for iOS, macOS, tvOS, watchOS, and visionOS
-- Missing SwiftUI components: collection views, attributed text, activity views, popovers, search bars
-- Extension patterns for adding functionality to existing SwiftUI views
-- Proper SPM packaging for a large, multi-platform library
+No single repo perfectly demonstrates WKWebView canvas embedding, so `references/wkwebview-embedding.md` synthesizes the best patterns from across the ecosystem.
 
-### Ghostty — Terminal Emulator & libghostty
-**Clone when:** Building anything that embeds a terminal, needs VT sequence parsing, requires GPU-accelerated text rendering, or wants to study a world-class Zig + Swift + Metal architecture.
+**Read:** `references/wkwebview-embedding.md` for complete patterns.
 
-```bash
-# Full terminal emulator (Zig + Swift + Metal)
-git clone https://github.com/ghostty-org/ghostty.git
-
-# Minimal libghostty-vt demo (~600 lines of C)
-git clone https://github.com/ghostty-org/ghostling.git
-```
-
-**What you'll learn:** Read `references/ghostty.md` for detailed architecture.
-
-Key patterns these repos teach:
-- **Ghostty (full):** Production Swift app consuming a Zig-compiled C library, multi-threaded terminal architecture (IO thread + render thread per surface), Metal rendering pipeline with multi-pass compositing, macOS app lifecycle in Swift/AppKit
-- **Ghostling (minimal):** How to consume the libghostty-vt C API in ~600 lines, zero-dependency terminal emulation, render state management without opinions about GUI framework
-- **libghostty-vt:** Embeddable terminal emulation library with C API, SIMD-optimized VT parsing, complete Unicode/grapheme support, Kitty keyboard protocol, mouse tracking
+**Key patterns covered:**
+- **WKWebView as child NSView** — Creating and embedding in AppKit view hierarchies
+- **Swift↔JavaScript bridge** — WKScriptMessageHandler for JS→Swift, evaluateJavaScript for Swift→JS
+- **WKUserContentController** — Injecting scripts, message handlers, content rules
+- **Multiple WKWebViews in a layout** — Process pooling, memory management, lifecycle
+- **NSViewRepresentable wrapping** — Bridging WKWebView into SwiftUI
+- **Web Inspector** — Enabling Safari Web Inspector for embedded WKWebViews
+- **Custom URL schemes** — WKURLSchemeHandler for intercepting requests
+- **Keyboard/focus management** — Handling first responder with embedded web views
 
 ---
 
 ## Agent Workflow: Cloning and Using References
 
-When a coding agent needs to reference these repos, follow this workflow:
-
-### 1. Clone to a working directory
 ```bash
-# Clone only what you need — don't clone all three unless required
-git clone --depth 1 https://github.com/AudioKit/Flow.git /tmp/ref-audiokit-flow
-git clone --depth 1 https://github.com/SwiftUIX/SwiftUIX.git /tmp/ref-swiftuix
+# Clone only what you need
+git clone --depth 1 https://github.com/CodeEditApp/CodeEdit.git /tmp/ref-codeedit
+git clone --depth 1 https://github.com/krzyzanowskim/STTextView.git /tmp/ref-sttextview
 git clone --depth 1 https://github.com/ghostty-org/ghostty.git /tmp/ref-ghostty
 git clone --depth 1 https://github.com/ghostty-org/ghostling.git /tmp/ref-ghostling
 ```
 
-Use `--depth 1` for shallow clones to save time and space. These are reference repos, not forks.
-
-### 2. Study the relevant files
-Each reference doc in `references/` includes a **Source Map** section listing the most important files to read first. Start there, not with a full directory listing.
-
-### 3. Adapt, don't copy
-These repos are MIT-licensed, but the point is to learn patterns and adapt them, not wholesale copy. Study the architecture, understand the decisions, then implement your own version informed by what you learned.
+Use `--depth 1` for shallow clones. Start with the Source Map in each reference doc to find the key files.
 
 ---
 
-## Dependency: Adding as Swift Packages
+## Ecosystem: Other Repos Worth Knowing
 
-If you want to use these as dependencies rather than just references:
-
-```swift
-// Package.swift
-dependencies: [
-    // AudioKit/Flow — node graph editor component
-    .package(url: "https://github.com/AudioKit/Flow.git", from: "1.0.4"),
-
-    // SwiftUIX — comprehensive SwiftUI extensions
-    .package(url: "https://github.com/SwiftUIX/SwiftUIX.git", branch: "master"),
-]
-```
-
-Ghostty/libghostty is not yet available as a standard SPM package. See `references/ghostty.md` for integration options.
-
----
-
-## Ecosystem: Related Repos Worth Knowing
-
-These didn't make the primary three but are valuable adjacent references:
-
-- **awesome-libghostty** (`github.com/Uzaaft/awesome-libghostty`): Community catalog of projects built on libghostty
-- **AudioKit/Controls** (`github.com/AudioKit/Controls`): SwiftUI knobs, sliders, XY pads — companion to Flow
-- **AudioKit/Keyboard** (`github.com/AudioKit/Keyboard`): SwiftUI music keyboard
-- **OpenSwiftUIProject/OpenSwiftUI** (`github.com/OpenSwiftUIProject/OpenSwiftUI`): Open-source reimplementation of Apple's SwiftUI internals — useful for understanding how SwiftUI works under the hood
-- **libghostty-rs** (`github.com/Uzaaft/libghostty-rs`): Rust bindings for libghostty, useful if building cross-language tooling
+| Repo | Stars | What It Shows |
+|------|-------|---------------|
+| `overtake/TelegramSwift` | ~5k | Massive production AppKit app — custom scroll views, animation, media embedding (GPL) |
+| `Whisky-App/Whisky` | ~15k | SwiftUI macOS app wrapping a complex native subsystem (Wine) (GPL) |
+| `HazAT/glimpse` | new | Native macOS micro-UI with WKWebView + bidirectional JSON messaging |
+| `kfix/MacPin` | ~1k | Full WKWebView webapp container with NSTabViewController + JavaScriptCore bridge |
+| `dagronf/DSFAppKitBuilder` | ~400 | SwiftUI-style DSL for building AppKit views programmatically |
+| `dagronf/AppKitUI` | new | AppKit UI toolkit with previews, declarative layout |
+| `AudioKit/Flow` | ~388 | SwiftUI node graph editor for flow-based UIs (MIT) |
+| `microsoft/fluentui-apple` | ~950 | Microsoft's UIKit/AppKit component library (MIT) |
+| `nicklockwood/SwiftFormat` | ~8k | Not UI, but exemplary Swift project structure and tooling |
+| `danielsaidi/WebViewKit` | ~200 | Simple cross-platform WKWebView SwiftUI wrapper (MIT) |

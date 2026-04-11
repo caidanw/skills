@@ -85,7 +85,11 @@ final class MetalCanvasView: NSView {
         // All ignored — we don't need precise presentation timing, we render on the
         // next main-queue turn. A production render loop would use `inOutputTime`.
         CVDisplayLinkSetOutputCallback(dl, { _, _, _, _, _, context in
-            let view = Unmanaged<MetalCanvasView>.fromOpaque(context!).takeUnretainedValue()
+            // `context` is the opaque self pointer we passed below; it is
+            // guaranteed non-nil for this call site, but guard anyway so a
+            // later refactor doesn't turn it into a latent crash.
+            guard let context else { return kCVReturnSuccess }
+            let view = Unmanaged<MetalCanvasView>.fromOpaque(context).takeUnretainedValue()
             DispatchQueue.main.async { view.render() }
             return kCVReturnSuccess
         }, Unmanaged.passUnretained(self).toOpaque())

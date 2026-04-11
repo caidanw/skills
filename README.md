@@ -36,6 +36,7 @@ npx skills add caidanw/skills@<skill-name>
 | [`git-safe-pr-workflow`](./git-safe-pr-workflow/) | Safe GitHub pull request workflow for low-experience Git users. |
 | [`karpathy-guidelines`](./karpathy-guidelines/) | Behavioral guidelines to reduce common LLM coding mistakes. |
 | [`lean-ts-patterns`](./lean-ts-patterns/) | Patterns for building lightweight, zero-dependency TypeScript tools and libraries. |
+| [`macos-swift-desktop`](./macos-swift-desktop/) | Build native macOS desktop applications in Swift using AppKit and SwiftUI. |
 | [`modern-css`](./modern-css/) | Teaches agents to write modern CSS using native features instead of legacy hacks, workarounds, and JavaScript. |
 | [`no-use-effect`](./no-use-effect/) | Prevent unnecessary React `useEffect` usage by steering code toward derived state, event handlers, memoization, `key`-based resets, `useSyncExternalStore`, and framework or query-library data APIs. |
 | [`parse-dont-validate`](./parse-dont-validate/) | Type-driven design principle: transform unstructured data into structured types at system boundaries, making illegal states unrepresentable. |

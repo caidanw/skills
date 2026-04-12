@@ -260,6 +260,56 @@ Sparkle 2 supports sandboxed apps via an XPC helper bundled inside the main app.
 
 Details shift between Sparkle 2.x point releases. Do not copy entitlement snippets from stale blog posts; read [Sparkle's "Sandboxing with Sparkle" guide](https://sparkle-project.org/documentation/sandboxing/) for the current requirements. General XPC helper patterns (lifecycle, mach service registration, message passing) live in `system-integration.md`.
 
+### Sparkle + sandbox: real-world gotchas (Steinberger)
+
+From [Peter Steinberger's "Code Signing and Notarization: Sparkle and Tears"](https://steipete.me/posts/2025/code-signing-and-notarization-sparkle-and-tears) — the best war-story source for what actually breaks:
+
+**XPC mach-lookup entitlements.** Sandboxed apps must declare mach-lookup exceptions for Sparkle's two XPC services. Both suffixes are required — missing either causes silent authorization failure:
+
+```xml
+<key>com.apple.security.temporary-exception.mach-lookup.global-name</key>
+<array>
+    <string>com.yourcompany.yourapp-spks</string>
+    <string>com.yourcompany.yourapp-spki</string>
+</array>
+```
+
+`-spks` = InstallerLauncher.xpc. `-spki` = Installer.xpc. Never rename Sparkle's internal bundle IDs (`org.sparkle-project.*`) — those are framework-internal. The mach-lookup strings use your app's prefix for communication routing only.
+
+**Signing order matters.** Sign XPC services first, frameworks second, app last. Never `--deep`:
+
+```bash
+# 1. XPC services (with entitlements preserved for Sparkle 2.6+)
+codesign -f -s "$IDENTITY" -o runtime \
+    "$APP/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc"
+codesign -f -s "$IDENTITY" -o runtime --preserve-metadata=entitlements \
+    "$APP/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc"
+
+# 2. Framework
+codesign -f -s "$IDENTITY" -o runtime \
+    "$APP/Contents/Frameworks/Sparkle.framework"
+
+# 3. Main app (NO --deep)
+codesign -f -s "$IDENTITY" -o runtime --entitlements YourApp.entitlements \
+    "$APP"
+```
+
+**Info.plist flags for sandboxed Sparkle:**
+
+```xml
+<key>SUEnableInstallerLauncherService</key>
+<true/>
+<!-- Only set if the app LACKS com.apple.security.network.client: -->
+<key>SUEnableDownloaderService</key>
+<true/>
+```
+
+**Build number gotcha.** Sparkle compares `CFBundleVersion` (build number), not `CFBundleShortVersionString`. If your appcast generator defaults build numbers to "1", users see "You're up to date!" despite new versions. Validate build numbers increment in CI:
+
+```bash
+BUILD=$(plutil -extract CFBundleVersion raw Info.plist)
+```
+
 ## Mac App Store specifics
 
 Brief notes on what changes when you ship through the App Store:

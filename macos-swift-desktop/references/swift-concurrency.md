@@ -341,6 +341,81 @@ class DocumentProcessor {
 
 If you're adding async methods to a non-`Sendable` type and getting warnings, isolated parameters are the modern fix. Don't slap `@unchecked Sendable` on the type — that hides real bugs.
 
+## Task ordering is not guaranteed
+
+The most common migration bug. Queue-based code has implicit FIFO ordering; `Task` creation does not.
+
+```swift
+// Queue world — order guaranteed:
+myClass.beginWork(with: 1) { print("done 1") }
+myClass.beginWork(with: 2) { print("done 2") }
+// 1 always before 2
+
+// Task world — order NOT guaranteed:
+Task { await myClass.work(with: 1) }
+Task { await myClass.work(with: 2) }
+// 2 can finish before 1
+```
+
+"There's no such thing as an implicit task dependency." — Massicotte. Even if `myClass` has internal serialization, the *scheduling* of the two Tasks is nondeterministic.
+
+**Mental model:** treat every `Task { }` as if it inserts a random delay before execution:
+
+```swift
+Task {
+    let delay: Int = (0...10).randomElement()!
+    try await Task.sleep(for: .seconds(delay))
+    // your code
+}
+```
+
+### Fixes for ordering
+
+**1. Explicit dependency chain** (preferred when one task depends on another):
+
+```swift
+let first = Task { await myClass.work(with: 1) }
+let second = Task {
+    _ = await first.value  // wait for first
+    await myClass.work(with: 2)
+}
+```
+
+**2. Synchronous-return Task pattern** (when call-site ordering matters):
+
+```swift
+final class MyClass {
+    // Synchronous work (state capture) happens at call time.
+    // Async work runs inside the returned Task.
+    func workTask(with value: Int) -> Task<Void, Never> {
+        let captured = prepareState(value)  // synchronous, ordered
+        return Task { await execute(captured) }
+    }
+}
+```
+
+**3. AsyncQueue** (stop-gap for FIFO):
+
+Use Matt Massicotte's [Queue](https://github.com/mattmassicotte/Queue) package when you need ordered async execution and structured concurrency doesn't fit:
+
+```swift
+let queue = AsyncQueue()
+queue.addOperation { await myClass.work(with: 1) }
+queue.addOperation { await myClass.work(with: 2) }
+// guaranteed: 1 before 2
+```
+
+## Migration mindset
+
+Key lessons from Massicotte's ["Making Mistakes with Swift Concurrency"](https://www.massicotte.org/mistakes-with-concurrency/):
+
+- **Swift 5 mode with warnings off is the unsafest dialect.** No compiler-enforced concurrency rules = silent data races. Turn warnings on even if you're not adopting Swift 6 yet.
+- **Migrate gradually, module by module.** Measured in months/years, not sprints. Use `@preconcurrency` and `@unchecked Sendable` as stepping stones, not permanent solutions.
+- **Actors are not queues.** They're advanced tools. Default to binary isolation: `@MainActor` or `nonisolated`. Introduce custom actors only when you have specific mutable state to protect.
+- **Needing lots of `Sendable` = too many isolation boundaries.** One actor can be too many. Reference types should rarely be `Sendable`.
+- **`nonisolated` is safe** — the compiler enforces the boundary. Only `@unchecked Sendable` and `nonisolated(unsafe)` introduce real risk.
+- **Start with `@MainActor` everywhere, opt out with `nonisolated`** for expensive work. Not the other way around.
+
 ## Desktop-specific concurrency notes
 
 - **AppKit views are `@MainActor`** — all `NSView`, `NSViewController`, `NSWindow` work must stay on MainActor. Don't use `nonisolated` overrides on view methods unless you're explicitly doing background work and syncing back.
@@ -348,8 +423,10 @@ If you're adding async methods to a non-`Sendable` type and getting warnings, is
 - **XPC proxies are nonisolated** — `NSXPCConnection.remoteObjectProxyWithErrorHandler` returns a nonisolated proxy. Calls to it are inherently async. Don't wrap the result in `MainActor.run` — just make the calling function `nonisolated` and hop to MainActor for the result.
 - **`CVDisplayLink` callbacks are off-main-thread** — the callback in `advanced-rendering.md` dispatches to main explicitly. Don't call `@MainActor` functions directly from the callback.
 
-## Source
+## Sources
 
-[Matt Massicotte — "Problematic Patterns"](https://www.massicotte.org/problematic-patterns/)
-
-See also Matt's other concurrency writing at [massicotte.org](https://www.massicotte.org/) and his [ConcurrencyRecipes](https://github.com/mattmassicotte/ConcurrencyRecipes) repo.
+- [Matt Massicotte — "Problematic Patterns"](https://www.massicotte.org/problematic-patterns/) — the original 15 patterns
+- [Matt Massicotte — "Making Mistakes with Swift Concurrency"](https://www.massicotte.org/mistakes-with-concurrency/) — migration mindset and common strategic errors
+- [Matt Massicotte — "Ordering and Concurrency"](https://www.massicotte.org/ordering-and-concurrency/) — why queue→Task migration introduces races
+- [ConcurrencyRecipes](https://github.com/mattmassicotte/ConcurrencyRecipes) — practical solutions repo
+- [Queue](https://github.com/mattmassicotte/Queue) — ordered async task execution

@@ -68,6 +68,7 @@ AppKit+SwiftUI bridging, `NSHostingView`, `NSViewRepresentable`, coordinator pat
 Metal, `CAMetalLayer`, infinite canvas, WKWebView embedding                                | `references/advanced-rendering.md`
 Embedding libghostty terminal surfaces                                                     | `references/libghostty-integration.md`
 Tier-1 repos to clone and study                                                            | `references/reference-repos.md`
+Swift concurrency pitfalls (split isolation, Task.detached, blocking async)                 | `references/swift-concurrency.md`
 What NOT to do                                                                             | `references/anti-patterns.md`
 Swift syntax from a TypeScript/Python lens                                                 | `references/swift-for-ts-devs.md`
 

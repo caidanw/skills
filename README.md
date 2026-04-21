@@ -30,6 +30,7 @@ npx skills add caidanw/skills@<skill-name>
 | [`architecture-md`](./architecture-md/) | Generate an ARCHITECTURE. |
 | [`behavioral-testing`](./behavioral-testing/) | Behavioral testing methodology — test what users experience, not how code is structured. |
 | [`code-comments`](./code-comments/) | Write high-signal code comments for humans and coding agents. |
+| [`design-patterns-gof`](./design-patterns-gof/) | The 23 Gang of Four object-oriented design patterns distilled as a practical field guide — intent, tradeoffs, modern relevance, language-level replacements, and when NOT to use each. |
 | [`design-system`](./design-system/) | Build design system components and UI that are accessible, themeable, and visually polished. |
 | [`distill-to-skill`](./distill-to-skill/) | Distill knowledge from any source — blog posts, articles, documentation, GitHub repos, video transcripts, books, papers — into a well-structured agent skill. |
 | [`Git Worktree`](./worktree/) | Create, remove, and list git worktrees in a standardized location |

@@ -8,7 +8,9 @@ description: >-
   replacements, and when NOT to use it. Triggers on: "design pattern", "GoF", "factory", "builder",
   "singleton", "adapter", "decorator", "observer", "strategy", "visitor", "state machine",
   "command pattern", "too many constructors", "subclass explosion", "program to an interface",
-  "composition over inheritance", "am I over-abstracting this".
+  "composition over inheritance", "am I over-abstracting this", "Swift design patterns",
+  "protocol-oriented programming", "POP in Swift", "Crusty talk", "protocol vs class", "value types
+  over reference types", "start with a protocol".
 ---
 
 # Design Patterns (Gang of Four)
@@ -165,6 +167,21 @@ Real systems stack 3–5 patterns. Key relationships from GoF's inter-pattern gr
 - Multiple *actual* implementations exist today (payment providers, renderers, formats).
 - You want a specific **consequence** (undo, part-whole uniformity, runtime algorithm swap).
 - The team needs a shared name to stop re-deriving the design in every review.
+
+## Language-specific guides
+
+- **Swift** — [references/swift-idioms.md](references/swift-idioms.md) maps every GoF pattern to
+  its Swift 5.10 / Swift 6 / iOS 17+ replacement (enum with associated values, `@Observable`,
+  `@resultBuilder`, actors, property wrappers, `Codable`, `AsyncSequence`, `@dynamicMemberLookup`,
+  structured concurrency, copy-on-write). Answers "is this pattern still idiomatic in Swift?" per
+  pattern.
+- **Swift — Protocol-Oriented Programming** — [references/swift-protocol-oriented.md](references/swift-protocol-oriented.md)
+  distills Dave Abrahams' WWDC 2015 "Crusty" talk (Session 408) and a decade of community
+  retrospective. Covers why value types + protocols + extensions dissolve Template Method, Strategy,
+  Abstract Factory, Bridge, Adapter, Visitor, Iterator — and the POP failure modes (protocol soup,
+  PAT friction, `some`/`any` confusion) that led Apple to bring classes back via `@Observable` /
+  `@Model`. Pair with `swift-idioms.md`: that file answers "what's the Swift replacement?"; this
+  file answers "why does it work, where does it fail, when do I still use a class?"
 
 ## Criticism and modernity — essential context
 

@@ -29,8 +29,10 @@ npx skills add caidanw/skills@<skill-name>
 | [`agents-md`](./agents-md/) | Write effective AGENTS. |
 | [`architecture-md`](./architecture-md/) | Generate an ARCHITECTURE. |
 | [`behavioral-testing`](./behavioral-testing/) | Behavioral testing methodology — test what users experience, not how code is structured. |
+| [`cleanup-swift`](./cleanup-swift/) | End-of-session cleanup pass for Swift code. |
+| [`cleanup-web`](./cleanup-web/) | End-of-session cleanup pass for TypeScript, React, and web code. |
 | [`code-comments`](./code-comments/) | Write high-signal code comments for humans and coding agents. |
-| [`design-patterns-gof`](./design-patterns-gof/) | The 23 Gang of Four object-oriented design patterns distilled as a practical field guide — intent, tradeoffs, modern relevance, language-level replacements, and when NOT to use each. |
+| [`design-patterns-gof`](./design-patterns-gof/) | The 23 Gang of Four object-oriented design patterns (Gamma, Helm, Johnson, Vlissides, 1994) distilled as a practical field guide, not a catalog. |
 | [`design-system`](./design-system/) | Build design system components and UI that are accessible, themeable, and visually polished. |
 | [`distill-to-skill`](./distill-to-skill/) | Distill knowledge from any source — blog posts, articles, documentation, GitHub repos, video transcripts, books, papers — into a well-structured agent skill. |
 | [`Git Worktree`](./worktree/) | Create, remove, and list git worktrees in a standardized location |
@@ -41,6 +43,7 @@ npx skills add caidanw/skills@<skill-name>
 | [`modern-css`](./modern-css/) | Teaches agents to write modern CSS using native features instead of legacy hacks, workarounds, and JavaScript. |
 | [`no-use-effect`](./no-use-effect/) | Prevent unnecessary React `useEffect` usage by steering code toward derived state, event handlers, memoization, `key`-based resets, `useSyncExternalStore`, and framework or query-library data APIs. |
 | [`parse-dont-validate`](./parse-dont-validate/) | Type-driven design principle: transform unstructured data into structured types at system boundaries, making illegal states unrepresentable. |
+| [`pr-review-triage`](./pr-review-triage/) | Pull PR review comments and triage them — separate substantive feedback from bikeshedding, stale comments, misreads, AI slop, and other noise. |
 | [`Technical Writing`](./tech-writing/) | Write clean, terse technical docs — commits, issues, PRDs, specs, and technical communication |
 | [`TypeScript`](./typescript/) | Write clean, pragmatically functional TypeScript — simple, composable, soundly typed |
 | [`typescript-refactoring`](./typescript-refactoring/) | Systematically refactor TypeScript codebases for readability, type safety, and AI-friendliness. |

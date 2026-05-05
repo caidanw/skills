@@ -16,32 +16,48 @@ Operate only on files modified during this session. Use `git status`, `git diff`
 
 If you can't identify the session's modified files with confidence, stop and ask.
 
-## Load these skills before reviewing
+## Review skills
 
-- simplify
-- design-patterns-gof
-- macos-swift-desktop
-- parse-dont-validate
-- ai-code-comments
+Each skill below represents a review lens. Every lens gets its own sub-agent.
+
+| Lens | Skill | Focus |
+|------|-------|-------|
+| Simplification | `simplify` | Dead code, needless abstractions, single-use helpers, unused params |
+| Type-driven design | `parse-dont-validate` | Push checks into types; make invalid states unrepresentable |
+| Design patterns | `design-patterns-gof` | Patterns only where they earn their weight |
+| Platform conventions | `macos-swift-desktop` | Naming, ARC, AppKit/SwiftUI boundaries, threading, main-actor isolation |
+| Comment hygiene | `code-comments` | Strip "what" comments and AI narration; keep "why" comments only |
 
 ## Approach
 
-Review each file through each lens. Suggested order:
+Dispatch one sub-agent per review lens, all in parallel. Each sub-agent:
 
-1. **simplify** — dead code, needless abstractions, single-use helpers, unused params
-2. **parse-dont-validate** — push checks into types; make invalid states unrepresentable
-3. **design-patterns-gof** — patterns only where they earn their weight
-4. **macos-swift-desktop** — platform conventions (naming, ARC, AppKit/SwiftUI boundaries, threading, main-actor isolation)
-5. **ai-code-comments** — strip "what" comments and AI narration; keep "why" comments only
+1. **Loads its skill** via the Skill tool — this is required before any review work
+2. **Reads the diff** — use `git diff` (and `git diff --cached` if needed) to get the session's changes
+3. **Reviews only through its own lens** — do not duplicate another lens's concerns
+4. **Returns structured findings** — for each finding: file + location, the proposed change with before/after, the principle behind it, and the trade-off if any. If nothing warrants changing for this lens, say so and return empty findings.
 
-For each finding, draft a proposal: file + location, the change, the principle behind it, and the trade-off if any.
+Sub-agent prompt template (adapt the lens name and skill name per row):
+
+> You are reviewing Swift code changes from this session through the **{lens}** lens.
+>
+> First, load the `{skill}` skill using the Skill tool — read it fully before reviewing.
+>
+> Then run `git diff` to see what changed. Review those changes exclusively through your lens.
+>
+> For each finding, return: file path + line range, proposed change (before/after), the principle motivating it, and any trade-off. If nothing needs changing for your lens, say so plainly.
+>
+> Do not apply changes. Propose only.
+
+After all sub-agents return, **aggregate** their findings:
 
 ## Output
 
-Present the review as a single batch:
-- Files reviewed
-- Proposed changes, grouped by file, each with before/after and reasoning
-- Anything you considered but rejected, with reasoning
-- If nothing warrants changing, say so plainly and stop
+Present the aggregated review as a single batch:
+- Files reviewed (union of all sub-agent scopes)
+- Proposed changes, grouped by file, each tagged with its lens and including before/after and reasoning
+- Conflicts between lenses (e.g., one lens wants to add abstraction, another wants to simplify) — flag these for the user to decide
+- Anything a sub-agent considered but rejected, with reasoning
+- If no sub-agent found anything worth changing, say so plainly and stop
 
 Wait for the user to approve before applying any edits.

@@ -44,6 +44,7 @@ npx skills add caidanw/skills@<skill-name>
 | [`no-use-effect`](./no-use-effect/) | Prevent unnecessary React `useEffect` usage by steering code toward derived state, event handlers, memoization, `key`-based resets, `useSyncExternalStore`, and framework or query-library data APIs. |
 | [`parse-dont-validate`](./parse-dont-validate/) | Type-driven design principle: transform unstructured data into structured types at system boundaries, making illegal states unrepresentable. |
 | [`pr-review-triage`](./pr-review-triage/) | Pull PR review comments and triage them — separate substantive feedback from bikeshedding, stale comments, misreads, AI slop, and other noise. |
+| [`simplify`](./simplify/) | Simplify and refine recently modified code for clarity and consistency. |
 | [`Technical Writing`](./tech-writing/) | Write clean, terse technical docs — commits, issues, PRDs, specs, and technical communication |
 | [`TypeScript`](./typescript/) | Write clean, pragmatically functional TypeScript — simple, composable, soundly typed |
 | [`typescript-refactoring`](./typescript-refactoring/) | Systematically refactor TypeScript codebases for readability, type safety, and AI-friendliness. |

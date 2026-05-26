@@ -22,7 +22,7 @@ Each skill below represents a review lens. Every lens gets its own sub-agent.
 
 | Lens | Skill | Focus |
 |------|-------|-------|
-| Simplification | `simplify` | Dead code, needless abstractions, single-use helpers, unused params |
+| Simplification | `simplify` | Dead code, needless abstractions, unused params, and helpers whose names do not add meaning. Do not inline single-use helpers that clarify call sites or hide non-trivial conditions. |
 | Type-driven design | `parse-dont-validate` | Push checks into types; make invalid states unrepresentable |
 | Design patterns | `design-patterns-gof` | Patterns only where they earn their weight |
 | Platform conventions | `macos-swift-desktop` | Naming, ARC, AppKit/SwiftUI boundaries, threading, main-actor isolation |

@@ -22,7 +22,7 @@ Each skill below represents a review lens. Every lens gets its own sub-agent.
 
 | Lens | Skill | Focus |
 |------|-------|-------|
-| Simplification | `simplify` | Dead code, needless abstractions, single-use helpers, unused params, over-engineered utilities |
+| Simplification | `simplify` | Dead code, needless abstractions, unused params, over-engineered utilities, and helpers whose names do not add meaning. Do not inline single-use helpers that clarify call sites or hide non-trivial conditions. |
 | TypeScript | `typescript` | Type soundness, pragmatic generics, discriminated unions over type assertions, `unknown` over `any` |
 | Type-driven design | `parse-dont-validate` | Push checks into types; make invalid states unrepresentable; branded types where warranted |
 | React effects | `no-use-effect` | Derived state over effects, event handlers over sync effects, `key`-resets over effect-driven resets, `useSyncExternalStore` over manual subscriptions |

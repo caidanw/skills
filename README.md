@@ -25,6 +25,7 @@ npx skills add caidanw/skills@<skill-name>
 <!-- skills-start -->
 | Skill | Description |
 | --- | --- |
+| [`adversarial-review`](./adversarial-review/) | Adversarially hunt for correctness bugs and regressions in a change set. |
 | [`agent-first-repo`](./agent-first-repo/) | Structure a repository and its documentation so AI coding agents can work effectively. |
 | [`agents-md`](./agents-md/) | Write effective AGENTS. |
 | [`architecture-md`](./architecture-md/) | Generate an ARCHITECTURE. |

@@ -29,6 +29,7 @@ Each skill below represents a review lens. Every lens gets its own sub-agent.
 | React performance | `vercel-react-best-practices` | Component boundaries, `use client` / `use server` placement, data fetching patterns, bundle impact, memoization |
 | CSS | `modern-css` | Native CSS over JS workarounds, logical properties, container queries, modern selectors, no legacy hacks |
 | Comment hygiene | `code-comments` | Strip "what" comments and AI narration; keep "why" comments only |
+| Correctness | `adversarial-review` | Behavior changes, dropped guards or edge cases, async/effect timing, server/client boundary, stale callers — bugs the session introduced |
 
 ## Approach
 

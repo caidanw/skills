@@ -27,6 +27,7 @@ Each skill below represents a review lens. Every lens gets its own sub-agent.
 | Design patterns | `design-patterns-gof` | Patterns only where they earn their weight |
 | Platform conventions | `macos-swift-desktop` | Naming, ARC, AppKit/SwiftUI boundaries, threading, main-actor isolation |
 | Comment hygiene | `code-comments` | Strip "what" comments and AI narration; keep "why" comments only |
+| Correctness | `adversarial-review` | Behavior changes, dropped guards or edge cases, concurrency hazards, swallowed errors, stale callers — bugs the session introduced |
 
 ## Approach
 

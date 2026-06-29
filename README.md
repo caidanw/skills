@@ -51,6 +51,10 @@ npx skills add caidanw/skills@<skill-name>
 | [`typescript-refactoring`](./typescript-refactoring/) | Systematically refactor TypeScript codebases for readability, type safety, and AI-friendliness. |
 | [`update-readme`](./update-readme/) | Use when adding, removing, or renaming a skill in this repository to keep the Available Skills table in README. |
 <!-- skills-end -->
+## Related External Skills
+
+- [BrowserAct](https://github.com/browser-act/skills): Browser automation CLI built for AI agents.
+
 
 ## Creating a Skill
 

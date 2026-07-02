@@ -33,6 +33,7 @@ npx skills add caidanw/skills@<skill-name>
 | [`cleanup-swift`](./cleanup-swift/) | End-of-session cleanup pass for Swift code. |
 | [`cleanup-web`](./cleanup-web/) | End-of-session cleanup pass for TypeScript, React, and web code. |
 | [`code-comments`](./code-comments/) | Write high-signal code comments for humans and coding agents. |
+| [browser-act](https://github.com/browser-act/skills) | Browser automation CLI built for AI agents. Break through anti-bot wall. | Browser-heavy workflows and web automation tasks |
 | [`design-patterns-gof`](./design-patterns-gof/) | The 23 Gang of Four object-oriented design patterns (Gamma, Helm, Johnson, Vlissides, 1994) distilled as a practical field guide, not a catalog. |
 | [`design-system`](./design-system/) | Build design system components and UI that are accessible, themeable, and visually polished. |
 | [`distill-to-skill`](./distill-to-skill/) | Distill knowledge from any source — blog posts, articles, documentation, GitHub repos, video transcripts, books, papers — into a well-structured agent skill. |

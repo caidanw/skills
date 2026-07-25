@@ -10,6 +10,7 @@ These apply everywhere — AppKit, SwiftUI, XPC, testing — so treat this as a 
 - [Task.detached for actor escaping](#taskdetached-for-actor-escaping)
 - [Explicit task priorities without justification](#explicit-task-priorities-without-justification)
 - [MainActor.run overuse](#mainactorrun-overuse)
+- [Accidental Void at generic closure boundaries](#accidental-void-at-generic-closure-boundaries)
 - [Stateless actors](#stateless-actors)
 - [Redundant Sendable conformances](#redundant-sendable-conformances)
 - [MainActor + Sendable closures](#mainactor--sendable-closures)
@@ -115,6 +116,39 @@ func updateUI() {
 The compiler enforces callers use `await`, and you can't accidentally call non-isolated code without awareness.
 
 **When `MainActor.run` is OK:** one-shot closures where a function genuinely crosses isolation boundaries (e.g., a `nonisolated` callback that needs to touch one UI element). Even then, prefer extracting a `@MainActor` helper.
+
+## Accidental Void at generic closure boundaries
+
+Swift only permits implicit return from a single-expression ordinary closure. When a generic closure result is inferred from its body without a concrete non-`Void` context, a multi-statement closure with no explicit `return` can default to `Void` even when its final expression produces a value. If the surrounding context already requires a non-`Void` result, Swift normally reports a compile-time missing-return error instead.
+
+This is dangerous around generic wrappers such as `MainActor.run`, transactions, lock helpers, tracing wrappers, retry helpers, and task bodies:
+
+```swift
+// Bad — `execute()` still runs, but the closure can infer `Void`.
+let result = try await MainActor.run {
+    try lifetime.ensureOpen()
+    try command.execute()
+}
+
+return encodeJSON(result as Any) // `Any` hides () until runtime encoding
+```
+
+Make value production explicit and constrain externally visible results:
+
+```swift
+let result: CommandResult = try await MainActor.run {
+    try lifetime.ensureOpen()
+    return try command.execute()
+}
+
+return encodeJSON(result)
+```
+
+The common regression is adding logging, metrics, or a guard to a formerly single-expression closure without adding `return` to the original expression.
+
+**Review rule:** whenever a generic closure result is assigned, returned, encoded, persisted, or sent over IPC, determine its inferred type. Value-producing multi-statement paths need explicit returns. Prefer a concrete receiving type at type-erased boundaries so accidental `Void` becomes a compiler error.
+
+Do not apply this rule mechanically to intentionally side-effect-only closures or result-builder bodies such as `@ViewBuilder`; result builders have different transformation semantics.
 
 ## Stateless actors
 
@@ -430,3 +464,5 @@ Key lessons from Massicotte's ["Making Mistakes with Swift Concurrency"](https:/
 - [Matt Massicotte — "Ordering and Concurrency"](https://www.massicotte.org/ordering-and-concurrency/) — why queue→Task migration introduces races
 - [ConcurrencyRecipes](https://github.com/mattmassicotte/ConcurrencyRecipes) — practical solutions repo
 - [Queue](https://github.com/mattmassicotte/Queue) — ordered async task execution
+- [Swift Book — Implicit Returns from Single-Expression Closures](https://github.com/swiftlang/swift-book/blob/main/TSPL.docc/LanguageGuide/Closures.md#implicit-returns-from-single-expression-closures)
+- [SE-0326 — Multi-statement closure inference](https://github.com/swiftlang/swift-evolution/blob/main/proposals/0326-extending-multi-statement-closure-inference.md)

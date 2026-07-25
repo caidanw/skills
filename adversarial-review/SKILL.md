@@ -1,6 +1,11 @@
 ---
 name: adversarial-review
-description: Adversarially hunt for correctness bugs and regressions in a change set. Use when reviewing a diff before finalizing, during a cleanup pass, or when asked to find bugs, pressure-test, or stress-test recently modified code. Triggers on: "find bugs", "what could break", "review for correctness", "did I break anything", "hunt regressions", "adversarial review", "pressure-test this change".
+description: >-
+  Adversarially hunt for correctness bugs and regressions in a change set. Use when reviewing a
+  diff before finalizing, during a cleanup pass, or when asked to find bugs, pressure-test, or
+  stress-test recently modified code. Triggers on "find bugs", "what could break", "review for
+  correctness", "did I break anything", "hunt regressions", "adversarial review", or
+  "pressure-test this change".
 ---
 
 # Adversarial Review
@@ -18,7 +23,7 @@ Assume the change is wrong until a concrete input proves it right. Hunt correctn
 
 Review the change, not the codebase.
 
-- Read the diff's added and changed lines (`git diff`). Every finding ties to a changed line.
+- Read the supplied frozen review target. If none was supplied, use `git diff`. Every finding ties to a changed line.
 - Trace the blast radius: for each changed signature, return shape, nullability, or unit, read its callers. A rename or a newly-nullable return breaks stale callers the diff never shows — the regression pure-diff review structurally misses.
 - Hand off, do not duplicate. Style → `simplify`. Comment intent → `code-comments`. Type design → `parse-dont-validate`. Security → `security-review`. Framework idioms → `typescript` / `no-use-effect` / `macos-swift-desktop`.
 
@@ -36,12 +41,25 @@ This is read-only. Propose fixes; do not apply them, and do not touch code outsi
 | State mutation / aliasing | Mutates a passed-in object, array, or default arg the caller still holds |
 | Async / await | A promise used as its value, a forgotten `await`, `async` inside `forEach`, sequential-vs-parallel slip |
 | Type coercion | `==` vs `===`, truthy `0` / `""` / `[]`, implicit string↔number, `NaN` |
+| Result-type loss | A generic closure or callback silently produces `Void`/unit, an optional, or a wider type than the caller expects |
+| Type-erasure boundary | A value flows through `Any`, `unknown`, catch-all overloads, dynamic JSON, IPC, persistence, or plugin APIs before its shape is checked |
 | Resource leak | Acquire (file, socket, lock, listener, subscription) with no release on every path — especially the error path |
 | Inverted logic | Flipped boolean, wrong operator, bad default, De Morgan slip — plausible, but takes the wrong branch |
 | Contract mismatch | Signature / units / nullability / return shape changed but not all callers; or a call with wrong or hallucinated args |
 | Partial change | One branch updated but not its twin; a flag without the gated code; a migration without its reader; leftover TODO |
 
 Weight the hunt: fresh, often agent-written code skews to happy-path gaps, missing null and edge guards, swallowed errors, mismatched or hallucinated APIs, and half-finished refactors. Look there first.
+
+## Trace result flow before type erasure
+
+At every generic closure, callback, actor hop, transaction, lock helper, retry wrapper, or task body whose result is consumed:
+
+1. State the concrete result type the caller expects.
+2. Verify every value-producing path actually returns that type. In Swift, when a generic closure result is inferred from its body without a concrete non-`Void` context, a multi-statement ordinary closure with no explicit `return` can infer `Void` even when its final expression produces a value. A concrete expected result usually turns the omission into a compiler error instead.
+3. Follow the result through overload resolution and type erasure. `Any`, catch-all overloads, and dynamic serializers can turn a compile-time mistake into a runtime failure.
+4. If the API has side effects, verify the side effect and returned success/error response separately. "The mutation happened" does not prove the protocol response succeeded.
+
+Do not apply ordinary closure-return rules to result builders or intentionally side-effect-only closures. Prefer a concrete expected type at serialization, IPC, persistence, and plugin boundaries so accidental widening fails compilation.
 
 ## Technique
 
@@ -51,6 +69,7 @@ For each changed function:
 2. Assume every variable can be null and every external call can fail. Find the first line that does not survive that assumption.
 3. Construct one concrete failing input and trace it line by line to the suspect spot. Verify it actually reaches that line — not a plausible neighbor.
 4. Ask "if I deleted this change, what breaks?" — tests whether it is necessary and what it regresses.
+5. For every added regression test, ask whether restoring the defect makes that test fail. A helper-level test that bypasses the changed production boundary is not regression coverage.
 
 ## Report only what you can trigger
 

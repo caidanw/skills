@@ -32,6 +32,7 @@ npx skills add caidanw/skills@<skill-name>
 | [`behavioral-testing`](./behavioral-testing/) | Behavioral testing methodology — test what users experience, not how code is structured. |
 | [`cleanup-swift`](./cleanup-swift/) | End-of-session cleanup pass for Swift code. |
 | [`cleanup-web`](./cleanup-web/) | End-of-session cleanup pass for TypeScript, React, and web code. |
+| [`clear-communication`](./clear-communication/) | Use clear, natural, reader-centered language for all agent communication. |
 | [`code-comments`](./code-comments/) | Write high-signal code comments for humans and coding agents. |
 | [`design-patterns-gof`](./design-patterns-gof/) | The 23 Gang of Four object-oriented design patterns (Gamma, Helm, Johnson, Vlissides, 1994) distilled as a practical field guide, not a catalog. |
 | [`design-system`](./design-system/) | Build design system components and UI that are accessible, themeable, and visually polished. |

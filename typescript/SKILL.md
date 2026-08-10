@@ -1,5 +1,5 @@
 ---
-name: "TypeScript"
+name: typescript
 description: "Write clean, pragmatically functional TypeScript — simple, composable, soundly typed"
 globs: ["*.ts", "*.tsx", "*.mts", "*.cts"]
 ---

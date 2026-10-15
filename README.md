@@ -25,7 +25,7 @@ npx skills add caidanw/skills@<skill-name>
 <!-- skills-start -->
 | Skill | Description |
 | --- | --- |
-| [`agents-md`](./skills/agents-md/) | Write effective AGENTS.md files that give coding agents the context they need to work in a repository. |
+| [`agents-md`](./skills/agents-md/) | Write effective AGENTS.md files that give coding agents only the context they cannot infer from the repository. |
 | [`architecture-md`](./skills/architecture-md/) | Generate an ARCHITECTURE.md file for a codebase following matklad's principles. |
 | [`behavioral-testing`](./skills/behavioral-testing/) | Behavioral testing methodology — test what users experience, not how code is structured. |
 | [`clear-communication`](./skills/clear-communication/) | Use clear, natural, reader-centered language for all agent communication. |

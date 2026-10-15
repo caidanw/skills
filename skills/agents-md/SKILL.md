@@ -1,184 +1,116 @@
 ---
 name: agents-md
 description: >-
-  Write effective AGENTS.md files that give coding agents the context they need to work
-  in a repository. Use when creating a new AGENTS.md, improving an existing one, setting up
-  a repo for AI coding agents, or onboarding agents to a codebase. Triggers on: "write AGENTS.md",
-  "create AGENTS.md", "agent instructions", "set up repo for agents", "configure coding agent",
-  "onboard agent to codebase", "agent context file".
+  Write effective AGENTS.md files that give coding agents only the context they cannot infer
+  from the repository. Use when creating a new AGENTS.md, improving or trimming an existing one,
+  setting up a repo for AI coding agents, or onboarding agents to a codebase. Triggers on:
+  "write AGENTS.md", "create AGENTS.md", "agent instructions", "set up repo for agents",
+  "configure coding agent", "onboard agent to codebase", "agent context file", "CLAUDE.md".
 ---
 
 # Writing Effective AGENTS.md Files
 
-AGENTS.md is a README for coding agents. It lives at the repo root and tells agents how to
-build, test, lint, navigate, and contribute to the project. Based on the agents.md open format
-(https://agents.md) and lessons from OpenAI's harness engineering approach.
+AGENTS.md is loaded into every agent session in the repo (format: https://agents.md).
+Every line costs tokens on every task, and agents follow what it says. So it should hold only what an agent cannot work out by reading the code, and it must stay true.
 
-## Core Principle: Map, Not Manual
+## Evidence
 
-Keep AGENTS.md short (~100-150 lines). It's a **table of contents**, not an encyclopedia.
+An ETH Zurich study (Gloaguen et al., 2026, arXiv:2602.11988) tested context files across several agents and models:
 
-The "one big instruction file" approach fails because:
-- **Context is scarce.** A giant file crowds out the actual task and code.
-- **Everything-is-important becomes nothing-is-important.** Agents pattern-match locally instead of navigating intentionally.
-- **It rots instantly.** A monolithic manual becomes a graveyard of stale rules.
-- **It's hard to verify.** A single blob doesn't lend itself to freshness checks.
+- Context files did not generally raise task success and raised inference cost by over 20%.
+- This held for both LLM-generated and developer-written files.
+- Agents followed the instructions well, but **repository overviews did not help**.
+- Context files were useful for **non-standard practices** the agent would otherwise get wrong.
 
-Point to deeper docs elsewhere. The agent starts with AGENTS.md and drills into
-references as needed.
+Treat this as the design rule: include what is non-standard, and leave out what is discoverable.
 
-## What to Include
+## Core Rule: Only Non-Inferable Context
 
-### 1. Dev Environment & Commands
+Before adding a line, ask: "Would a capable agent get this wrong after reading the code, config, and CI?" If not, cut it.
 
-The most immediately useful section. Concrete commands, not prose.
+| Include | Leave out |
+|---|---|
+| Commands that differ from the obvious (`bun` not `npm`, `just test`, a Nix shell, codegen steps) | `npm install` / `npm test` when `package.json` already says so |
+| How to run a single test or a fast subset | A directory tour or file-by-file overview |
+| Project conventions that break the usual default | Language basics and general best practices |
+| Traps: generated files, slow or flaky suites, required env vars, services that must be running | Anything a linter, formatter, or type checker already enforces |
+| Architecture rules the code does not make obvious ("workers never import API code") | How a module works internally (belongs in code comments or `ARCHITECTURE.md`) |
+| Hard guardrails: what never to do, what to ask about first | README content: project pitch, badges, end-user install |
+| Pointers to deeper docs, with when to read them | Content copied from those docs |
+
+## Sections
+
+Use only the sections that have content. A five-line AGENTS.md is fine.
+
+### Commands
+
+Only the non-obvious ones, especially single-test and codegen commands.
 
 ```markdown
 ## Commands
-- Install: `npm install`
-- Dev server: `npm run dev`
-- Test single file: `npx vitest run path/to/test.ts`
-- Test all: `npm test`
-- Lint: `npm run lint`
-- Format: `npm run format`
-- Type check: `npm run typecheck`
+- Package manager is bun. Do not use npm or pnpm.
+- Single test: `bun test path/to/file.test.ts`
+- After editing `schema.prisma`: `bun run db:generate` (types are stale until you do)
+- Integration tests need `docker compose up -d db` first
 ```
 
-Include any prerequisites or non-obvious setup. If the project uses Docker, Nix, or
-a custom build system, say so here.
-
-### 2. Repository Structure
-
-Key paths and what lives where. Keep it high-level — 1 line per directory.
+### Conventions That Break Defaults
 
 ```markdown
-## Repository Structure
-- `src/api/` — HTTP API layer, routes and validation
-- `src/store/` — Database access, all SQL lives here
-- `src/worker/` — Background job processing
-- `src/types/` — Shared domain types
-- `tests/` — Test files mirror source structure
-- `docs/` — Architecture and design documentation
+## Conventions
+- Errors: return `Result<T, E>` from `src/lib/result.ts`; do not throw in domain code
+- Logging: use `log` from `src/lib/logger.ts`, never `console.*` (stripped in prod builds)
+- DB columns are snake_case; the ORM maps them, so never hand-write camelCase SQL
 ```
 
-For the full treatment of how to write an architecture codemap with boundaries
-and invariants, see the `architecture-md` skill.
-
-### 3. Architecture Boundaries
-
-What can depend on what. What's deliberately absent. These are the rules agents
-violate most often without explicit guidance.
-
-```markdown
-## Architecture Boundaries
-- API layer never accesses the database directly — always goes through `src/store/`
-- `src/types/` has zero dependencies on other source modules
-- Workers communicate via the store interface, never import API code
-- No circular dependencies between top-level modules
-```
-
-### 4. Coding Standards (Non-Obvious Only)
-
-Don't list things the agent already knows (like "use const over let"). List only
-project-specific conventions the agent couldn't infer from reading the code.
-
-```markdown
-## Coding Standards
-- Strict TypeScript — no `any`, no `as` casts except in test files
-- Errors: use `Result<T, E>` pattern from `src/types/result.ts`, not thrown exceptions
-- Logging: always use structured logger from `src/logger.ts`, never `console.log`
-- Naming: database columns are snake_case, TypeScript properties are camelCase
-```
-
-### 5. Testing Instructions
-
-How to run tests, where they live, patterns to follow, what to cover.
-
-```markdown
-## Testing
-- Tests live next to source: `src/foo.ts` -> `src/foo.test.ts`
-- Use `describe`/`it` blocks, not `test()`
-- Mock external services, never hit real APIs in tests
-- New features require tests — cover success, failure, and edge cases
-- Run relevant tests before submitting: `npx vitest run src/path/`
-```
-
-### 6. PR & Commit Conventions
-
-```markdown
-## Commits & PRs
-- Conventional commits: `feat:`, `fix:`, `refactor:`, `test:`, `docs:`
-- PR title format: `type(scope): description`
-- Run `npm run lint && npm test` before committing
-- Keep PRs focused — one logical change per PR
-```
-
-### 7. Boundaries (Do / Don't / Ask First)
-
-Explicit guardrails prevent costly mistakes.
+### Boundaries
 
 ```markdown
 ## Boundaries
-- **Never:** commit secrets, credentials, or tokens
-- **Never:** use destructive git operations (force push, hard reset) without asking
-- **Never:** edit generated files by hand when a generation workflow exists
-- **Ask first:** large cross-module refactors, new dependencies, migration changes
+- `src/api/` never touches the database directly; go through `src/store/`
+- Never edit files under `src/generated/`; run `bun run codegen`
+- Never commit secrets or run destructive git commands (force push, hard reset) without asking
+- Ask first: new dependencies, migrations, cross-package refactors
 ```
 
-### 8. References
-
-Pointers to deeper documentation. This is where the "table of contents" pattern
-pays off — keep AGENTS.md lean, point elsewhere for depth.
+### Pointers
 
 ```markdown
 ## References
-- Architecture: see `ARCHITECTURE.md`
-- API docs: see `docs/api-reference.md`
-- Design decisions: see `docs/design-docs/`
-- Deployment: see `docs/deployment.md`
+- Read `ARCHITECTURE.md` before adding a new top-level module
+- Release process: `docs/releasing.md`
 ```
 
-## What to Omit
+## Prefer Enforcement Over Prose
 
-- **README content** — Don't duplicate project description, installation for end users, badges
-- **Language basics** — Don't explain TypeScript/Python/Rust fundamentals
-- **Every lint rule** — Only list non-obvious, project-specific ones
-- **Prose paragraphs** — Use bullet points and code blocks. Agents parse structure, not essays
-- **Things that change every PR** — Only include stable conventions
-- **Implementation details** — "How the scheduler works" belongs in ARCHITECTURE.md, not here
+A rule the agent must remember is weaker than a check that fails. When a rule matters, encode it as a lint, type, test, or CI check, and give the error message a fix hint. Then delete the prose rule or keep one line pointing at the check.
 
-## Monorepo Pattern
+## Writing and Maintaining It
 
-Root AGENTS.md for global rules. Nested AGENTS.md per package for package-specific
-instructions. The closest file to the edited code wins.
+- **Write it by hand, or cut hard.** Do not ship an auto-generated file (`/init` output) as-is; the
+  study found generated files add cost without gains. Draft with an agent if useful, then delete
+  every inferable line.
+- **Add rules reactively.** When an agent makes the same mistake twice, add the one line that would
+  have prevented it, or better, a check.
+- **Stale rules are worse than none.** Agents follow them faithfully. Remove a rule in the same
+  change that makes it untrue.
+- **Bullets and code blocks, not prose.**
+- **Other tools:** if a tool reads a different file (for example `CLAUDE.md`), symlink it to
+  `AGENTS.md` instead of keeping two copies.
 
-```
-AGENTS.md                    # global: commit conventions, CI, shared tooling
-packages/api/AGENTS.md       # API-specific: routes, middleware, auth patterns
-packages/worker/AGENTS.md    # worker-specific: job patterns, retry behavior
-packages/shared/AGENTS.md    # shared lib: no side effects, pure functions only
-```
+## Monorepos
 
-Keep nested files focused on what's **different** about that package. Don't repeat
-global rules — the agent reads both the nearest file and the root.
+Root AGENTS.md for repo-wide rules; a nested AGENTS.md per package for what is different there.
+The nearest file to the edited code applies along with the root. Do not repeat root rules in nested
+files.
 
-## Anti-Patterns
+## Checklist
 
-- **The novel** — 500+ lines of prose. Nobody reads it, agent or human.
-- **Stale rules** — "Always use library X" when the team switched to Y months ago. Stale rules are worse than no rules — agents follow them faithfully.
-- **Redundant guidance** — Restating what the linter already enforces. If `eslint` catches it, don't list it.
-- **Vague instructions** — "Write clean code" is useless. "Use structured logger, never console.log" is actionable.
-- **Missing commands** — The agent should be able to build, test, and lint from AGENTS.md alone without reading CI config.
-
-## Quality Checklist
-
-Before finishing, verify:
-
-- [ ] Can an agent build, test, lint, and format using only the commands listed?
-- [ ] Is the repository structure documented at the directory level?
-- [ ] Are architecture boundaries explicit (what can't depend on what)?
-- [ ] Are only non-obvious coding standards listed?
-- [ ] Are there clear "never do" guardrails?
-- [ ] Does it point to deeper docs rather than trying to contain everything?
-- [ ] Is it under ~150 lines?
-- [ ] Would a stale rule here cause real damage? If so, can it be enforced mechanically instead?
+- [ ] Every line passes "would a capable agent get this wrong without it?"
+- [ ] No directory tour or codebase overview
+- [ ] Non-obvious commands, especially single-test and codegen, are listed
+- [ ] Nothing restates what lint, format, or type checks enforce
+- [ ] Guardrails are explicit (never do / ask first)
+- [ ] Rules that can be checks are checks
+- [ ] Every rule is true today
+- [ ] Short enough that you would read all of it (usually well under 100 lines)

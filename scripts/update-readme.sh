@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Regenerates the Available Skills table in README.md from SKILL.md frontmatters.
-# Usage: bash update-readme/update-readme.sh
+# Usage: bash scripts/update-readme.sh
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -27,6 +27,7 @@ parse_skill() {
         in_desc=0
         val=$0; sub(/^description:[[:space:]]*/, "", val)
         gsub(/^[[:space:]"]+|[[:space:]"]+$/, "", val)
+        gsub(/\\"/, "\"", val)
         desc=val
         next
     }
@@ -47,11 +48,12 @@ parse_skill() {
     ' "$1"
 }
 
-# Return the first sentence of a string (up to the first .!?).
+# Return the first sentence of a string: up to the first .!? followed by a space or the end.
+# The lookahead keeps names like "AGENTS.md" intact.
 first_sentence() {
     awk '{
-        if (match($0, /^[^.!?]+[.!?]/))
-            print substr($0, RSTART, RLENGTH)
+        if (match($0, /[.!?]( |$)/))
+            print substr($0, 1, RSTART)
         else
             print $0
         exit
@@ -59,7 +61,7 @@ first_sentence() {
 }
 
 # Collect one tab-separated line per skill: name <TAB> dir <TAB> description
-for dir in "$ROOT"/*/; do
+for dir in "$ROOT"/skills/*/; do
     skill_file="$dir/SKILL.md"
     [ -f "$skill_file" ] || continue
 
@@ -82,7 +84,7 @@ sort -f -o "$skills_file" "$skills_file"
 # Build the Markdown table
 printf '| Skill | Description |\n| --- | --- |\n' > "$table_file"
 while IFS=$'\t' read -r name dirname desc; do
-    printf '| [`%s`](./%s/) | %s |\n' "$name" "$dirname" "$desc" >> "$table_file"
+    printf '| [`%s`](./skills/%s/) | %s |\n' "$name" "$dirname" "$desc" >> "$table_file"
 done < "$skills_file"
 
 # Replace the region between <!-- skills-start --> and <!-- skills-end --> in README.md

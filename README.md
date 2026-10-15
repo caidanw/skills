@@ -25,22 +25,22 @@ npx skills add caidanw/skills@<skill-name>
 <!-- skills-start -->
 | Skill | Description |
 | --- | --- |
-| [`agents-md`](./agents-md/) | Write effective AGENTS.md files that give coding agents the context they need to work in a repository. |
-| [`architecture-md`](./architecture-md/) | Generate an ARCHITECTURE.md file for a codebase following matklad's principles. |
-| [`behavioral-testing`](./behavioral-testing/) | Behavioral testing methodology — test what users experience, not how code is structured. |
-| [`clear-communication`](./clear-communication/) | Use clear, natural, reader-centered language for all agent communication. |
-| [`code-comments`](./code-comments/) | Write high-signal code comments for humans and coding agents. |
-| [`design-system`](./design-system/) | Build design system components and UI that are accessible, themeable, and visually polished. |
-| [`distill-to-skill`](./distill-to-skill/) | Distill knowledge from any source — blog posts, articles, documentation, GitHub repos, video transcripts, books, papers — into a well-structured agent skill. |
-| [`lean-ts-patterns`](./lean-ts-patterns/) | Patterns for building lightweight, zero-dependency TypeScript tools and libraries. |
-| [`macos-swift-desktop`](./macos-swift-desktop/) | Build native macOS desktop applications in Swift using AppKit and SwiftUI. |
-| [`modern-css`](./modern-css/) | Teaches agents to write modern CSS using native features instead of legacy hacks, workarounds, and JavaScript. |
-| [`no-use-effect`](./no-use-effect/) | Prevent unnecessary React `useEffect` usage by steering code toward derived state, event handlers, memoization, `key`-based resets, `useSyncExternalStore`, and framework or query-library data APIs. |
-| [`parse-dont-validate`](./parse-dont-validate/) | Type-driven design principle: transform unstructured data into structured types at system boundaries, making illegal states unrepresentable. |
-| [`simplify`](./simplify/) | Simplify and refine recently modified code for clarity and consistency. |
-| [`technical-writing`](./technical-writing/) | Write clean, terse technical docs — commits, issues, PRDs, specs, and technical communication |
-| [`typescript`](./typescript/) | Write clean, pragmatically functional TypeScript — simple, composable, soundly typed |
-| [`typescript-refactoring`](./typescript-refactoring/) | Systematically refactor TypeScript codebases for readability, type safety, and AI-friendliness. |
+| [`agents-md`](./skills/agents-md/) | Write effective AGENTS.md files that give coding agents the context they need to work in a repository. |
+| [`architecture-md`](./skills/architecture-md/) | Generate an ARCHITECTURE.md file for a codebase following matklad's principles. |
+| [`behavioral-testing`](./skills/behavioral-testing/) | Behavioral testing methodology — test what users experience, not how code is structured. |
+| [`clear-communication`](./skills/clear-communication/) | Use clear, natural, reader-centered language for all agent communication. |
+| [`code-comments`](./skills/code-comments/) | Write high-signal code comments for humans and coding agents. |
+| [`design-system`](./skills/design-system/) | Build design system components and UI that are accessible, themeable, and visually polished. |
+| [`distill-to-skill`](./skills/distill-to-skill/) | Distill knowledge from any source — blog posts, articles, documentation, GitHub repos, video transcripts, books, papers — into a well-structured agent skill. |
+| [`lean-ts-patterns`](./skills/lean-ts-patterns/) | Patterns for building lightweight, zero-dependency TypeScript tools and libraries. |
+| [`macos-swift-desktop`](./skills/macos-swift-desktop/) | Build native macOS desktop applications in Swift using AppKit and SwiftUI. |
+| [`modern-css`](./skills/modern-css/) | Teaches agents to write modern CSS using native features instead of legacy hacks, workarounds, and JavaScript. |
+| [`no-use-effect`](./skills/no-use-effect/) | Prevent unnecessary React `useEffect` usage by steering code toward derived state, event handlers, memoization, `key`-based resets, `useSyncExternalStore`, and framework or query-library data APIs. |
+| [`parse-dont-validate`](./skills/parse-dont-validate/) | Type-driven design principle: transform unstructured data into structured types at system boundaries, making illegal states unrepresentable. |
+| [`simplify`](./skills/simplify/) | Simplify and refine recently modified code for clarity and consistency. |
+| [`technical-writing`](./skills/technical-writing/) | Write clean, terse technical docs — commits, issues, PRDs, specs, and technical communication |
+| [`typescript`](./skills/typescript/) | Write clean, pragmatically functional TypeScript — simple, composable, soundly typed |
+| [`typescript-refactoring`](./skills/typescript-refactoring/) | Systematically refactor TypeScript codebases for readability, type safety, and AI-friendliness. |
 <!-- skills-end -->
 
 ## Creating a Skill
@@ -48,7 +48,7 @@ npx skills add caidanw/skills@<skill-name>
 Each skill follows a simple structure:
 
 ```
-skill-name/
+skills/skill-name/
 └── SKILL.md
 ```
 
@@ -64,6 +64,14 @@ description: A clear description of what this skill does and when to use it
 
 [Instructions for the agent go here]
 ```
+
+After adding, removing, or renaming a skill, regenerate the table above:
+
+```bash
+bash scripts/update-readme.sh
+```
+
+Retired skills live in [`archive/`](./archive/) and are not installable.
 
 ## License
 

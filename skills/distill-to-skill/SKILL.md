@@ -15,7 +15,7 @@ description: >-
 Turn any source of knowledge into a well-structured agent skill. This is the process
 skill — it covers how to extract, filter, restructure, and encode knowledge. For the
 mechanical aspects of skill creation (directory structure, frontmatter format, validation,
-packaging), use the `skill-creator` skill.
+packaging), use the `skill-creator` skill. For writing craft that applies to any document an agent reads (pointers, progressive disclosure, pruning), use `writing-for-agents` if installed.
 
 ## The Distillation Mindset
 
@@ -80,9 +80,8 @@ skill still be useful on its own? If yes, you've extracted the core correctly.
 Use when the idea can be fully expressed in ~100-250 lines. The concept is
 cohesive enough that splitting it would lose the thread.
 
-Examples from today's work:
-- `parse-dont-validate` — One core idea (parse > validate) with practical rules
-- `karpathy-guidelines` — A set of behavioral rules
+Examples:
+- `type-system-discipline` — One core idea (make the compiler enforce the model) with practical rules
 - `agents-md` — How to write one specific file type
 
 **Broad topic with depth → SKILL.md + references/**
@@ -92,8 +91,8 @@ independently. SKILL.md carries the principles and quick-reference; references
 carry the deep dives.
 
 Examples:
-- `lean-ts-patterns` — 7 principles in SKILL.md, 5 reference files by domain
-- `agent-first-repo` — 3 pillars in SKILL.md, 3 reference files for each pillar
+- `lean-ts-patterns` — principles in SKILL.md, 5 reference files by domain
+- `modern-css` — a 118-page site distilled into a SKILL.md index plus one reference file per category
 
 **Multiple independent ideas → Split into separate skills**
 
@@ -101,8 +100,8 @@ If the source contains 2+ concepts that would trigger in different contexts,
 make separate skills. They can cross-reference each other.
 
 Example: The OpenAI harness engineering article → split into `agents-md` (how to
-write the file) + `agent-first-repo` (broader repo structure) because they trigger
-in different contexts.
+write the file) and a separate repo-structure skill, because they trigger in
+different contexts.
 
 **Decision heuristic:**
 ```
@@ -121,7 +120,8 @@ the user's preferred language and ecosystem.
 - **Code examples:** Rewrite in the target language (typically TypeScript/Bun)
 - **Library references:** Map to the target ecosystem's equivalents
 - **Idioms:** Use the target language's patterns (e.g., branded types instead of newtypes)
-- **Keep it runnable:** Code in the skill should be copy-pasteable and work
+- **Keep it runnable:** Code in the skill should be copy-pasteable and work. Run every
+  non-trivial snippet before shipping it; distilled code drifts from the original API.
 
 If the original insight is language-agnostic, use the target language for examples
 but keep the prose universal.
@@ -187,7 +187,9 @@ Before finishing, check:
 
 - [ ] Could an agent use this skill without reading the original source?
 - [ ] Is every section actionable (rules, patterns, code) not explanatory (history, motivation)?
-- [ ] Are code examples in the user's preferred language and copy-pasteable?
+- [ ] Are code examples in the user's preferred language, and did you run them?
+- [ ] Are volatile facts (versions, browser support, stats) dated, with where to recheck?
+- [ ] Did you check the source's claims against a primary source when they matter?
 - [ ] Is SKILL.md under ~300 lines? (Move depth to references/ if over)
 - [ ] Does the description include concrete trigger phrases?
 - [ ] Is there a checklist or code review guide for verification?
@@ -228,7 +230,7 @@ applies here, then point to the companion skill for depth.
 ```markdown
 Parse data at system boundaries into precise types — don't let raw/untyped data
 flow deep into business logic. For the full treatment of branded types, smart
-constructors, and the shotgun parsing anti-pattern, see the `parse-dont-validate` skill.
+constructors, and the shotgun parsing anti-pattern, see the `type-system-discipline` skill.
 ```
 
 ## Source-Specific Tips

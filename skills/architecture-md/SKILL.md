@@ -122,6 +122,7 @@ Only include sections that are genuinely cross-cutting.]
 - Exhaustive API documentation (that's rustdoc/typedoc/javadoc territory)
 - Setup instructions (that's README)
 - Contribution guidelines (that's CONTRIBUTING.md)
+- Agent instructions (that's AGENTS.md, which should point here rather than copy the codemap)
 
 ### Style Rules
 

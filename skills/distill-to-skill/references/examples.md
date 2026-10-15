@@ -106,12 +106,12 @@ The article contained 5+ distinct ideas that trigger in different contexts:
 
 Ideas 1 and 2 trigger independently (different user intents), so they became
 separate skills. Ideas 3-5 are always needed in the context of idea 2, so they
-became reference files within the `agent-first-repo` skill.
+became reference files within the `agent-first-repo` skill (since archived).
 
 **The cross-reference pattern:**
 The article also referenced two external concepts:
 - matklad's ARCHITECTURE.md → already a skill (`architecture-md`)
-- "Parse, don't validate" → already a skill (`parse-dont-validate`)
+- "Parse, don't validate" → already a skill (`parse-dont-validate`, since merged into `type-system-discipline`)
 
 Rather than duplicating those skills' content, `agent-first-repo` includes
 2-3 sentences of contextualized summary + a name-drop pointing to the companion
@@ -120,7 +120,7 @@ skill. This keeps each skill lean and avoids content drift between copies.
 **Result:**
 - `agents-md` — standalone, 184 lines
 - `agent-first-repo` — 156 lines SKILL.md + 3 references (505 lines)
-- Cross-references to `architecture-md` and `parse-dont-validate`
+- Cross-references to `architecture-md` and `parse-dont-validate` (now `type-system-discipline`)
 
 ---
 

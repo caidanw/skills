@@ -23,6 +23,15 @@ These apply everywhere — AppKit, SwiftUI, XPC, testing — so treat this as a 
 - [Too much code in closures](#too-much-code-in-closures)
 - [Non-Sendable types without isolated parameters](#non-sendable-types-without-isolated-parameters)
 
+## Swift 6.2 defaults change the advice
+
+Swift 6.2 made single-threaded app code easier to write:
+
+- **SE-0466 default isolation.** A module can infer `@MainActor` for everything not marked otherwise (Xcode 26+ new app projects do this; SwiftPM `.defaultIsolation(MainActor.self)`). Most "annotate with `@MainActor`" advice below becomes the default.
+- **SE-0461 `nonisolated(nonsending)`.** Under `NonisolatedNonsendingByDefault`, a `nonisolated async` function runs on the caller's actor instead of hopping to the global executor. To move work off the actor, mark the function `@concurrent`.
+
+Under these settings, where this file says "use a `nonisolated` function" to get work off the main actor, use `@concurrent` instead. Check the target's build settings before applying either rule.
+
 ## Split isolation
 
 **Don't** mix isolated and non-isolated properties on the same type:

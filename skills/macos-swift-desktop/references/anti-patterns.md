@@ -28,7 +28,7 @@ This reference lists the mistakes that most reliably wreck a macOS app: dismissa
 ## 2. Pure SwiftUI for non-trivial desktop apps
 
 **Don't:** ship a multi-window, document-based, menu-bar, or borderless-window app written entirely in SwiftUI's `App` / `WindowGroup` / `Scene` tree.
-**Why:** SwiftUI on macOS still lacks reliable APIs for addressing individual windows, custom chrome, system tray, per-menu-item validation, and the first-responder chain. You will hit a wall and refactor mid-project.
+**Why:** SwiftUI on macOS still lacks reliable APIs for addressing individual windows, custom chrome, per-menu-item validation, and the first-responder chain (`MenuBarExtra` covers simple menu bar apps). You will hit a wall and refactor mid-project.
 **Do this instead:** start with an AppKit shell (`NSApplicationDelegate`, `NSWindowController`, `NSSplitViewController`) and host SwiftUI content via `NSHostingController`. See `appkit-swiftui-hybrid.md` for the decision matrix and bridging patterns.
 
 ## 3. Missing sandbox or notarization

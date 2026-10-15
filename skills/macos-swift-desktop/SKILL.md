@@ -77,24 +77,26 @@ Swift syntax from a TypeScript/Python lens                                      
 Full list with "do this instead" pointers: `references/anti-patterns.md`
 
 1. **`NSPopover` for menu bar UI** — use `NSMenu`; popovers have dismissal bugs and don't feel native
-2. **Pure SwiftUI for complex desktop apps** — missing APIs for multi-window, borderless windows, system tray; always hybrid at the shell
-3. **Missing sandbox or notarization** — Gatekeeper quarantine on first launch; app refuses to run on fresh systems
+2. **Pure SwiftUI for complex desktop apps** — weak control over individual windows, custom chrome, menu validation, and the responder chain; use an AppKit shell for non-trivial apps
+3. **Shipping without Developer ID signing and notarization** — Gatekeeper blocks the app on first launch (on macOS 15+ the override is buried in System Settings). The App Sandbox is required for the Mac App Store and recommended otherwise, but not required to launch
 4. **Large `NSOutlineView` without virtualization** — 10k+ items hang the UI; animations can't be disabled
 5. **Hardcoded file paths instead of `NSOpenPanel`/bookmarks** — sandbox violations; fails on Mac App Store
 6. **Ignoring `Task.isCancelled` in long-running work** — tasks don't auto-cancel; background work burns CPU/battery
 7. **Custom undo instead of `NSUndoManager`** — users expect `Cmd+Z`; custom stacks are fragile
-8. **Privileged ops in the main app process** — use an XPC helper for file-system, network, or system operations
+8. **Privileged ops in the main app process** — Authorization Services, writes to `/Library`, launchd installs: move them into an XPC service or `SMAppService` helper. Ordinary file and network work stays in the app
 9. **Force-unwrapping Apple APIs that return optional** (`MTLCreateSystemDefaultDevice()!`) — crash on older hardware/VMs
 10. **Saving preferences straight to a plist in the bundle** — bundles are read-only on signed apps; use `UserDefaults` or app support directory
 
-## Modern Swift defaults (Swift 6.1+, macOS 14+)
+## Modern Swift defaults (Swift 6.2+, macOS 14+)
 
-- **Default to `@MainActor`** on view controllers, view models, and anything touching UIKit/AppKit. Opt into parallelism explicitly via `nonisolated` or detached tasks.
+- **Main actor by default.** For app targets, turn on default MainActor isolation (Xcode 26+ "Default Actor Isolation" = MainActor, the default for new app projects; SwiftPM: `.defaultIsolation(MainActor.self)`). Opt out with `nonisolated` for work that should not touch UI.
+- **Approachable Concurrency.** With `NonisolatedNonsendingByDefault` (Xcode's "Approachable Concurrency" setting), `nonisolated async` functions run on the caller's actor. Mark a function `@concurrent` when it must leave the actor, such as CPU-heavy parsing or image decoding.
 - **Use `async`/`await`** over completion handlers. Avoid `Combine` for new code unless the API surface demands it.
-- **Use `Observable` macro** (not `ObservableObject`) for SwiftUI view models on macOS 14+.
+- **Use the `Observable` macro** (not `ObservableObject`) for SwiftUI view models on macOS 14+.
 - **Use typed throws** (`func load() throws(LoadError)`) for domain errors where the caller can meaningfully discriminate.
 - **Structured concurrency**: prefer `async let` and `TaskGroup` over `DispatchQueue`. Limit `DispatchQueue` to interop with C APIs that demand it.
-- **Deployment target ≥ macOS 14** unless you have a concrete reason. macOS 14 unlocks `Observable`, `SwiftData`, `NavigationStack` for documents, and modern `SwiftUI` APIs.
+- **Deployment target ≥ macOS 14** unless you have a concrete reason. macOS 14 unlocks `Observable`, `SwiftData`, and modern SwiftUI APIs.
+- **Pure SwiftUI conventions:** Xcode 27 ships Apple's own SwiftUI skills for its coding assistant. Prefer those for SwiftUI-only questions and the 2027 APIs (`WritableDocument`, new toolbar controls); use this skill for AppKit, the hybrid shell, distribution, and system integration.
 
 ## Project setup checklist
 

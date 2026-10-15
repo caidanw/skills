@@ -1,223 +1,105 @@
 ---
 name: technical-writing
-description: "Write clean, terse technical docs — commits, issues, PRDs, specs, and technical communication"
+description: "Write and review technical docs, RFCs, design docs, readmes, PR descriptions, commit messages, issues, and PRDs. Pick the doc type first (Diátaxis), then write plain sentences to the reader, one statement at a time, with nothing open to two readings. Includes templates for each engineering artifact. Use when drafting or reviewing any of these."
 ---
 
-# Technical Writing
+# Technical writing
 
-Write for humans and machines. Every sentence earns its place or gets cut.
+Write so a tired engineer understands on the first read. Apply all four layers.
 
-## Core Principles
+Three rules sit above the layers:
 
-**Lead with the point.** First sentence = the takeaway. Context comes after, if needed.
+- **Cut every word that does no work.** If the sentence survives without a word, the word goes. "In order to" is "to". "It is important to note that" is nothing.
+- **Use the short, everyday word.** "Use", not "utilize". "Help", not "facilitate". "Do", not "perform". A long word has to buy its length with precision.
+- **When a rule makes a sentence worse, fix the sentence another way or leave it alone.** A sentence that follows every rule and sounds like a machine wrote it has failed.
 
-**One idea per unit.** One point per sentence. One topic per paragraph. One concern per section.
+The codebase is the word list. Write the real symbol, file, flag, or command name, not a synonym or a description of it.
 
-**Concrete over abstract.** Name the thing. Show the example. Skip the preamble.
+Don't invent jargon. Use the words a developer would say out loud: "move", "delete", "a budget that only decreases", not "evacuate", "ratchet", or "endgame". A named pattern is fine when the doc says what it means the first time. Propose a new offender and its replacement as an addition to `unslop`'s abstract-metaphor rule in your reply, with the diff. Don't edit that skill.
 
-**Active voice, imperative mood.** "Add retry logic" not "Retry logic should be added" or "Added retry logic."
+## Vary the rhythm
 
-**No filler words.** Cut: "basically", "simply", "just", "in order to", "it should be noted that", "as mentioned above", "please note that", "going forward". If removing a word doesn't change the meaning, remove it.
+A doc can obey every layer and still read machine-written: every sentence clipped short, no view anywhere, nothing specific.
 
-**No hedging unless uncertainty is the point.** Say "This will break X" not "This could potentially have an impact on X."
+- Mix sentence lengths on purpose. Short sentences land a point. Longer ones carry a fact with its condition or consequence.
+- One thought per sentence does not mean one length per sentence. Split the sentence that carries two thoughts. Keep the long sentence that carries one.
+- Have a view where the mode allows it. Explanation weighs trade-offs, so say what you make of them instead of listing pros and cons. Reference stays dry.
+- Be specific over sterile. Not "schema changes can cause issues" but "a column rename fails the build".
 
-**Prefer short words.** "use" over "utilize", "start" over "initialize", "show" over "indicate", "about" over "approximately."
+## Pick the mode first (Diátaxis)
 
-## Format: Git Commits
+One document, one mode. Two questions pick it: does the content inform action (doing) or understanding (thinking), and does it serve learning or work?
 
-Structure:
-```
-<type>: <what changed>
+- Action + learning: **tutorial**.
+- Action + work: **how-to**.
+- Understanding + work: **reference**.
+- Understanding + learning: **explanation**.
 
-<why it changed — optional, only if non-obvious>
-```
+Use the compass on a whole document or on one sentence.
 
-Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `ci`
+**Tutorial: learning by doing.** The learner's success is your job, not theirs. Open by saying what the learner will build, not what they will "learn". Every step produces a visible result, early and often. Tell them what they should see: the expected output, the prompt change, the log line. Cut explanation to one clause and a link. Stay concrete. Write as "we", in commands: "First, do x. Now, do y."
 
-Rules:
-- Subject line under 72 characters
-- Imperative mood: "Add X" not "Added X" or "Adds X"
-- No period at end of subject
-- Body explains *why*, not *what* — the diff shows what
-- Reference issue numbers when relevant: `Fixes #42`
+**How-to: steps to a goal.** Solve a problem a person has, not an operation the machine can perform. Assume competence and skip teaching. Action only: no digressions, no background, no completeness for its own sake. Link those instead. Allow forks and judgment: "If you want x, do y." Name the guide by the task: "How to calibrate the radar array", not "Radar array calibration".
 
-Good:
-```
-feat: add rate limiting to /api/upload
+**Reference: facts for lookup.** Only describe. No instruction, no persuasion, no opinion. Be dry, complete, and sure. State facts, options, limits, and errors with no hedging. Mirror the structure of the thing described, so code and docs can be navigated together. Put material where readers expect it. Generate from code where possible.
 
-Prevents abuse from automated clients. Limits to 100 req/min
-per API key. Returns 429 with Retry-After header.
+**Explanation: understanding and why.** One bounded topic, readable away from the product. Each title should tolerate an implicit "About..." in front. Anchor on a real why question. Give context: design decisions, history, constraints, alternatives. Opinion is allowed here and nowhere else.
 
-Fixes #187
-```
+Don't mix modes: no reference tables inside a tutorial, no tutorial hand-holding inside reference, no arguing inside a how-to. Split and link instead.
 
-Bad:
-```
-Updated the upload endpoint to add some rate limiting functionality
-so that we can prevent potential abuse issues going forward
-```
+## Write sentences to the reader (Google developer style)
 
-## Format: GitHub Issues
+- Talk to the reader as "you", in the present tense. "Will" only for things that genuinely happen later.
+- Say who does what: "the compiler checks", not "is checked". Passive is fine only when the actor is unknown or beside the point.
+- Write instructions as commands: "Click Submit." State facts plainly. Never "should be done".
+- Put the condition before the instruction: "To delete the document, click Delete."
+- Put the common case first. Exceptions after.
+- Sound like a knowledgeable friend. No buzzwords, no figurative language, no "please" in instructions, and never "simply", "easy", or "quickly" in a procedure. If it were simple, the reader would not be here.
+- Don't pre-announce ("we will soon support...") and don't start consecutive sentences with the same phrase.
+- Link with words that say where the link goes: the page title or a short description. Never "click here". Prefer a sentence of context on the page over a link off it.
+- Headings carry the point, not just the topic ("Pick the mode first", not "Modes"). Sentence case. A task heading is a bare verb phrase ("Create an instance"). A concept heading is a noun phrase. One h1 per page, no skipped levels.
+- Numbered lists for sequences, bullets for everything else. Introduce a list with a complete sentence. Keep items parallel.
+- Code goes in code font. UI elements go in bold. Use serial commas. Drop "etc." and say up front that a list is partial.
 
-### Bug Reports
+## Make statements load one at a time (STE rules)
 
-```markdown
-## Problem
-<What's broken — one sentence>
+- One instruction per sentence. One thought per sentence everywhere else.
+- Split instructions longer than about 20 words and other sentences longer than about 25.
+- Put the warning or condition before the step it guards: "If hot oil touches your skin, injuries can occur."
+- Keep "the" and "a": "Remove backup file" reads two ways. "Remove the backup file" reads one.
+- Give each word one meaning and one job, then keep it. If "check" means inspect, don't also use it for restrain.
+- Pick one word per action and stick to it: "start", not "start" here and "initiate" there.
+- Write procedures as direct commands, never as narration and never in the passive: "Install the component", not "the component must be installed".
+- Avoid "-ing" words where you can.
 
-## Steps to Reproduce
-1. <Exact steps>
-2. <No ambiguity>
+## Leave no sentence open to two readings (Global English)
 
-## Expected
-<What should happen>
+- Keep words like "only" and "not" next to the word they change: "only fails on growth" and "fails only on growth" say different things.
+- Break up long noun strings: "the proto import budget check script" becomes "the script that checks the proto-import budget".
+- Make every "it", "they", and "this" point at one obvious thing. Repeat the noun when in doubt. Never use "this" or "which" to point at a whole clause.
+- Don't drop verbs: "Phase 1 moves the converters and Phase 2 the runtime" leaves Phase 2 without one. Give it one.
+- Keep the small words that show structure, such as "that" in "Ensure that the switch is off". Never trade clarity for word count.
+- Repeat the article in a series when it prevents a misread: "the client and the host", not "the client and host", when they are two things.
+- Say which parts "and" or "or" joins when a sentence can group two ways. "Both...and", "either...or", and "if...then" are free disambiguators.
+- Use periods, not semicolons. Replace an em dash with a new sentence.
+- Make text in parentheses a full grammatical unit or its own sentence. Never form plurals with "(s)".
+- No slashes: write "a, b, or both" instead of "a/b" or "and/or".
+- Call each thing by one name, everywhere. A doc that says "the gate", "the ratchet", and "the budget check" for one thing teaches three things. Don't churn what didn't change.
+- Skip idioms, colloquialisms, Latin abbreviations, and metaphors.
 
-## Actual
-<What happens instead>
+## Voice and artifacts
 
-## Context
-- Version/commit: <hash or version>
-- Environment: <OS, browser, runtime>
-- Logs/screenshots: <if relevant>
-```
+- Apply the **unslop** skill to every doc this skill touches. That skill owns the slop-pattern catalog: AI vocabulary, filler, hedging, formatting tells.
+- PR descriptions, commit messages, issues, and PRDs are writing too. Every layer except Diátaxis applies to them. Their shapes are in [references/artifact-templates.md](references/artifact-templates.md). A PR body is a briefing that a reviewer can read in under a minute. Do not paste run logs, SHA lists, or metric tables. Link them.
+- Product UI strings are not documentation. Use your product's copy guidelines for those.
+- Match the repo's existing formatting for code snippets. Write real paths. Make every count or tree claim true at the commit that lands it, and include the command that regenerates it.
 
-### Feature Requests
+## Worked example
 
-```markdown
-## Problem
-<What user need is unmet — not the solution, the problem>
+Before:
 
-## Proposed Solution
-<How to solve it — be specific>
+> Configuration of the proto import ratchet budget script parameters is performed via budget.json. Note that it's important to remember that running with --write, which updates the committed budget to reflect the current count, should only be done when lowering it. If exceeded, CI fails.
 
-## Alternatives Considered
-<What else you evaluated and why it lost>
+After:
 
-## Scope
-<What's in, what's explicitly out>
-```
-
-## Format: PRD (Product Requirements Document)
-
-```markdown
-# <Feature Name>
-
-## Problem
-<Who has this problem. What they can't do. Why it matters now.>
-
-## Solution
-<What we're building. 2-3 sentences max.>
-
-## Requirements
-
-### Must Have
-- <Requirement — testable, unambiguous>
-- <Each one starts with a verb>
-
-### Nice to Have
-- <Lower priority items>
-
-### Out of Scope
-- <Explicitly excluded to prevent scope creep>
-
-## Success Criteria
-- <Measurable outcome>
-- <How we know this worked>
-
-## Technical Notes
-<Constraints, dependencies, migration concerns — only if relevant>
-
-## Open Questions
-- <Unresolved decisions, with owners and deadlines>
-```
-
-Rules:
-- Requirements are testable. "Fast" is not a requirement. "Page loads in < 200ms at p95" is.
-- Each requirement starts with a verb: "Support", "Display", "Validate", "Allow".
-- Success criteria are measurable. If you can't measure it, sharpen it.
-- Open questions have owners. Unowned questions don't get answered.
-
-## Format: Technical Specs / Design Docs
-
-```markdown
-# <Title>
-
-## Context
-<Why this doc exists. What decision or system it describes. 2-3 sentences.>
-
-## Design
-
-### Architecture
-<How it works. Diagrams welcome, walls of text not.>
-
-### Data Model
-<Schema changes, new entities, relationships.>
-
-### API
-<Endpoints, contracts, examples.>
-
-## Tradeoffs
-<What you chose and what you gave up. Be honest about costs.>
-
-## Risks
-<What could go wrong. What's the mitigation.>
-```
-
-## Format: Inline Code Comments
-
-Only comment *why*, never *what*. The code says what.
-
-Good:
-```
-// Retry 3x because the payment API returns transient 503s under load
-```
-
-Bad:
-```
-// Call the payment API with retries
-```
-
-Don't comment:
-```
-// Increment counter
-count += 1
-```
-
-## Format: PR Descriptions
-
-```markdown
-## What
-<One sentence — what this PR does>
-
-## Why
-<Motivation — link to issue if applicable>
-
-## How
-<Brief summary of approach — not a line-by-line walkthrough>
-
-## Testing
-<How you verified this works>
-```
-
-## Anti-Patterns
-
-**The Wall of Context.** Three paragraphs of background before the point. Invert it. Point first, context if needed.
-
-**The Passive Report.** "It was determined that the service should be restarted." By whom? Say who did what.
-
-**Weasel Words.** "Some users", "significant impact", "may cause issues." Quantify or be specific.
-
-**Premature Abstraction.** Don't generalize when a concrete example communicates faster.
-
-**The Apology Prefix.** Don't start with "Sorry for the long message" — make the message shorter instead.
-
-**Redundant Structure.** Don't add sections just because the template has them. Empty "Risks: None" sections waste attention. Omit sections that add nothing.
-
-## Editing Checklist
-
-Before publishing, read it once and cut:
-1. Sentences that repeat what another sentence already said
-2. Adjectives and adverbs that don't change the meaning
-3. Throat-clearing openers ("So basically...", "As you may know...")
-4. Sections with no actionable content
-5. Anything the reader already knows or can infer
+> `budget.mjs` reads the committed budget from `budget.json` and counts the files that import protos. If the count exceeds the budget, CI fails. Run `budget.mjs --write` only to lower the budget.

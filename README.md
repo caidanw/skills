@@ -37,7 +37,7 @@ npx skills add caidanw/skills@<skill-name>
 | [`modern-css`](./skills/modern-css/) | Write modern CSS using native features instead of legacy hacks, workarounds, and JavaScript. |
 | [`no-use-effect`](./skills/no-use-effect/) | Prevent unnecessary React `useEffect` usage by steering code toward derived state, event handlers and form Actions, `key`-based resets, `useSyncExternalStore`, `useEffectEvent`, and framework or query-library data APIs. |
 | [`simplify`](./skills/simplify/) | Simplify and refine recently modified code for clarity and consistency. |
-| [`technical-writing`](./skills/technical-writing/) | Write clean, terse technical docs — commits, issues, PRDs, specs, and technical communication |
+| [`technical-writing`](./skills/technical-writing/) | Write and review technical docs, RFCs, design docs, readmes, PR descriptions, commit messages, issues, and PRDs. |
 | [`type-system-discipline`](./skills/type-system-discipline/) | Make the compiler reject impossible states, mixed-up primitives, and unhandled variants, and parse external data once at system boundaries. |
 | [`typescript-best-practices`](./skills/typescript-best-practices/) | TypeScript best practices: simple, composable, soundly typed code, with rules for unions, branded types, parsing, narrowing, casts, exhaustiveness, errors, and the TS 6/7 compiler baseline. |
 | [`typescript-refactoring`](./skills/typescript-refactoring/) | Systematically refactor TypeScript codebases for readability and type safety. |

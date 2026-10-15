@@ -160,92 +160,17 @@ That means:
 - Use issue or incident ids when they exist
 - Keep comments local and durable
 
-## Inline Comment Templates
+## Templates
 
-Use these templates directly. Replace brackets with concrete facts.
-
-### Decision Comment
+Fill the brackets with concrete facts.
 
 ```ts
-// Use [approach] because [constraint/tradeoff].
-// [Alternative] looked simpler but failed on [case]. See [issue/incident].
-```
-
-Example:
-
-```ts
-// Use a stable sort because invoice lines with equal priority must keep upload order.
-// Hash bucketing looked simpler but changed exported totals. See issue #214.
-```
-
-### Invariant Comment
-
-```ts
-// INVARIANT: [property that must remain true].
-// If this changes, [bad outcome].
-```
-
-Example:
-
-```ts
-// INVARIANT: every audit event must include actorId, even for system actions.
-// If this changes, backfills and incident review lose causality.
-```
-
-### Compatibility Comment
-
-```ts
-// Keep [odd code] for [browser/vendor/legacy system] compatibility.
-// Remove only after [condition].
-```
-
-Example:
-
-```ts
-// Keep CRLF line endings for the bank import tool.
-// Remove only after finance confirms parser v3 is live in all regions.
-```
-
-### Incident Breadcrumb
-
-```ts
-// Added after [incident/bug].
-// This guards against [failure mode] when [trigger].
-```
-
-Example:
-
-```ts
-// Added after INC-482.
-// This guards against duplicate shipment creation when the carrier webhook retries.
-```
-
-### Temporary Work Comment
-
-```ts
-// TEMP: [workaround].
-// Remove after [specific event/version/date owner], not "later".
-```
-
-Example:
-
-```ts
-// TEMP: skip image optimization for SVG uploads.
-// Remove after `media-service` 2.4 lands and backfill job completes.
-```
-
-### Non-Obvious Example Comment
-
-```ts
-// Example: [input] -> [output].
-// This matters because [surprising rule].
-```
-
-Example:
-
-```ts
-// Example: " ACME-01 " -> "acme-01".
-// This matters because partner ids are case-insensitive but whitespace-significant upstream.
+// Use [approach] because [constraint]. [Alternative] failed on [case]. See [issue].
+// INVARIANT: [property that must stay true]. If this changes, [bad outcome].
+// Keep [odd code] for [system] compatibility. Remove only after [condition].
+// Added after [incident]. Guards against [failure mode] when [trigger].
+// TEMP: [workaround]. Remove after [specific event or version], not "later".
+// Example: [input] -> [output]. This matters because [surprising rule].
 ```
 
 ## Docstrings And API Comments
@@ -292,6 +217,15 @@ for (const item of items) {
 ```
 
 The code already says this.
+
+### Change Narration
+
+```ts
+// Updated to use the new pricing API
+// Fixed: now handles null users
+```
+
+This describes the edit, not the code. Put it in the commit message; the next reader sees the file as it is, not your diff.
 
 ### Name Translation
 

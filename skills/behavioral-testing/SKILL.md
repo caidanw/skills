@@ -4,8 +4,9 @@ description: >
   Behavioral testing methodology — test what users experience, not how code is structured.
   Use when writing tests, reviewing test quality, planning test strategy for new features,
   or when existing tests are brittle/verbose/coupled to implementation details.
-  Triggers: writing tests, TDD, test review, "tests keep breaking", "too many mocks",
-  "tests are verbose", test coverage planning, behavior-driven development.
+  Pairs with the `tdd` skill when working test-first.
+  Triggers: writing tests, test review, "tests keep breaking", "too many mocks",
+  "tests are verbose", "is this test any good", test coverage planning.
 ---
 
 # Behavioral Testing
@@ -32,7 +33,7 @@ Act:     Do the thing the user would do
 Assert:  Check what the user would see
 ```
 
-That's it. No red-green-red ritual. No verbose setup. If test setup is longer than the assertion, something is wrong.
+No verbose setup. If test setup is longer than the assertion, something is wrong.
 
 ### What to Test
 
@@ -64,14 +65,14 @@ Name tests after the behavior, not the function:
 
 ```typescript
 // ✅ Terse — tests one behavior, reads in 3 seconds
-test('shows error when email is empty', () => {
+test('shows error when email is empty', async () => {
   render(<LoginForm />);
-  click(submitButton());
+  await userEvent.click(screen.getByRole('button', { name: /submit/i }));
   expect(screen.getByText('Email is required')).toBeVisible();
 });
 
 // ❌ Verbose — ceremony obscures intent
-test('should display an error message when the user submits the form without entering an email address', () => {
+test('should display an error message when the user submits the form without entering an email address', async () => {
   const mockOnSubmit = vi.fn();
   const mockOnError = vi.fn();
   const { container } = render(
@@ -107,7 +108,26 @@ Before writing or reviewing any test, run these checks:
 
 □ Did I write this test after the implementation?
   → If yes: verify it actually fails when behavior is broken, not just when code changes
+
+□ Would this test still pass if every function it imports returned undefined or a wrong value?
+  → If yes: the assertion is too loose. Call the subject with one concrete input and assert
+    the literal output or effect. Tells: toBeDefined, toBeTruthy, not.toThrow,
+    toHaveBeenCalled alone, an expected value computed by the code under test,
+    or a restated constant
 ```
+
+## Regression Tests for Bugs
+
+When a bug has a clear, cheap test path, make the broken behavior executable before you change production code.
+
+1. Pick the narrowest check the codebase already uses for that path (unit, component, integration).
+2. Write the smallest test that would have caught the bug. It encodes the intended behavior, not the current implementation.
+3. Run it before the fix and confirm it fails for the intended reason. If it passes, or fails for another reason, fix the test first.
+4. Make the smallest fix, rerun, and confirm it passes. Report the failing-before and passing-after output.
+
+Don't force a test when the path needs broad harness setup, brittle mocks, slow end-to-end infrastructure, production-only state, vague repro steps, or large fixture churn. Use the closest executable check instead (a targeted script, a repro command, browser automation, a log assertion) and say why. No new test beats a bad test.
+
+Never change a test to match a wrong implementation, and never weaken an existing assertion unless the intended behavior changed. If the bug is flaky, make the test deterministic and name the signal it locks down.
 
 ## When to Mock
 
@@ -115,7 +135,7 @@ Before writing or reviewing any test, run these checks:
 
 **Never mock** internal modules, components you own, or "just to be safe."
 
-If you need to mock a thing to test it, the design has a coupling problem — fix the design, not the test.
+If you need to mock something you own to test it, the design has a coupling problem. Fix the design, not the test.
 
 ## Detailed References
 

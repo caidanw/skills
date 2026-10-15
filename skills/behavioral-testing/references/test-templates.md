@@ -60,7 +60,7 @@ describe('SearchForm', () => {
     await userEvent.type(screen.getByRole('searchbox'), 'react');
     await userEvent.click(screen.getByRole('button', { name: /search/i }));
 
-    expect(screen.getByText(/results for "react"/i)).toBeVisible();
+    expect(await screen.findByText(/results for "react"/i)).toBeVisible();
   });
 
   test('shows error for empty query', async () => {
@@ -128,33 +128,35 @@ MSW intercepts at the network layer — components, hooks, state management all 
 
 ## E2E Test — User Journey
 
+Use role and label locators (`getByRole`, `getByLabel`, `getByText`). They find elements the way users and assistive tech do, and survive markup changes. `expect(...).toBeVisible()` retries, so no manual waits.
+
 ```typescript
 import { test, expect } from '@playwright/test';
 
 test('complete signup flow', async ({ page }) => {
   await page.goto('/signup');
-  await page.fill('[name="email"]', 'new@example.com');
-  await page.fill('[name="password"]', 'securePass123');
-  await page.click('button:has-text("Create Account")');
+  await page.getByLabel('Email').fill('new@example.com');
+  await page.getByLabel('Password').fill('securePass123');
+  await page.getByRole('button', { name: 'Create Account' }).click();
 
-  await expect(page.locator('text=Welcome')).toBeVisible({ timeout: 10000 });
+  await expect(page.getByText('Welcome')).toBeVisible();
 });
 
 test('shows validation errors', async ({ page }) => {
   await page.goto('/signup');
-  await page.click('button:has-text("Create Account")');
+  await page.getByRole('button', { name: 'Create Account' }).click();
 
-  await expect(page.locator('text=Email is required')).toBeVisible();
-  await expect(page.locator('text=Password is required')).toBeVisible();
+  await expect(page.getByText('Email is required')).toBeVisible();
+  await expect(page.getByText('Password is required')).toBeVisible();
 });
 
 test('prevents duplicate signup', async ({ page }) => {
   await page.goto('/signup');
-  await page.fill('[name="email"]', 'existing@example.com');
-  await page.fill('[name="password"]', 'pass123');
-  await page.click('button:has-text("Create Account")');
+  await page.getByLabel('Email').fill('existing@example.com');
+  await page.getByLabel('Password').fill('pass123');
+  await page.getByRole('button', { name: 'Create Account' }).click();
 
-  await expect(page.locator('text=already exists')).toBeVisible();
+  await expect(page.getByText(/already exists/)).toBeVisible();
 });
 ```
 

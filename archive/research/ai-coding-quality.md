@@ -1,5 +1,7 @@
 # AI Coding Quality: Research Findings
 
+> **Archived October 2026.** Most evidence here measures 2021–2024 models (Codex/Copilot, GPT-4), several figures cite only "multiple papers", and the skill mapping below points at skills that were since archived or rewritten. Do not use it to justify skill changes without re-checking against current sources.
+
 Design rationale for the skills system. This document captures what academic research, industry publications, and practitioners have found about getting AI agents to write good code. Reference this when building or updating skills — it explains WHY our skills recommend what they do.
 
 This is NOT a skill. Agents don't load this. It's for the humans who design the agent's instructions.

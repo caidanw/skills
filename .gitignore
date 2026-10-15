@@ -11,3 +11,6 @@ Thumbs.db
 
 # Node (in case any skills bundle scripts)
 node_modules/
+
+# Agent planning docs
+docs/plans/

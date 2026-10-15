@@ -1,4 +1,4 @@
-# Modern TypeScript Features (5.0+)
+# Modern TypeScript Features (5.0 – 6.0)
 
 Quick reference for TypeScript features that change how you write code day-to-day.
 
@@ -234,10 +234,10 @@ try {
 
 ## Import Attributes (TS 5.3+)
 
-Replaces the deprecated `assert` syntax for imports:
+Replaces the `assert` syntax, which is an error in TS 6 and removed in TS 7:
 
 ```ts
-// Old (deprecated)
+// Old (error in TS 6+)
 import data from "./data.json" assert { type: "json" }
 
 // New
@@ -258,3 +258,12 @@ Requires explicit return types and type annotations on exports. Enables fast par
 ```
 
 **When to use:** Large monorepos where build speed matters. Pairs well with explicit return types on exported functions (which you should be writing anyway).
+
+## TS 6.0 Additions
+
+- **`es2025` target and lib:** `RegExp.escape`, `Promise.try`, Iterator helpers (`.map`, `.filter`, `.take`, `.toArray`), and `Set` methods (`union`, `intersection`, `difference`).
+- **`Temporal` types** via `"lib": ["esnext"]` (or `esnext.temporal`). Prefer `Temporal` over `Date` math where the runtime supports it.
+- **`Map`/`WeakMap` upsert:** `getOrInsert` and `getOrInsertComputed` in `esnext`.
+- **`#/` subpath imports** work under `moduleResolution: "bundler"` and `"nodenext"`. Use them instead of `paths` aliases when code must also run under Node's type stripping, which ignores `tsconfig.json`.
+- **`"lib": ["dom"]`** now includes `dom.iterable` and `dom.asynciterable`.
+- **Method callbacks infer like arrows** when they never use `this`.

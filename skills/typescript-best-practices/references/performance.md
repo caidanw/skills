@@ -2,6 +2,8 @@
 
 Practical tips for keeping `tsc` fast. Drawn from the [TypeScript Performance Wiki](https://github.com/microsoft/TypeScript/wiki/Performance) and real-world experience.
 
+TS 7's native compiler is roughly 10x faster, so upgrading is the biggest single win. The type-shape tips below still apply: slow types are slow in any compiler.
+
 ## Writing Fast-to-Compile Code
 
 ### Prefer `interface extends` Over `&` Intersections

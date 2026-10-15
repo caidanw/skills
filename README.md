@@ -36,10 +36,10 @@ npx skills add caidanw/skills@<skill-name>
 | [`macos-swift-desktop`](./skills/macos-swift-desktop/) | Build native macOS desktop applications in Swift using AppKit and SwiftUI. |
 | [`modern-css`](./skills/modern-css/) | Teaches agents to write modern CSS using native features instead of legacy hacks, workarounds, and JavaScript. |
 | [`no-use-effect`](./skills/no-use-effect/) | Prevent unnecessary React `useEffect` usage by steering code toward derived state, event handlers, memoization, `key`-based resets, `useSyncExternalStore`, and framework or query-library data APIs. |
-| [`parse-dont-validate`](./skills/parse-dont-validate/) | Type-driven design principle: transform unstructured data into structured types at system boundaries, making illegal states unrepresentable. |
 | [`simplify`](./skills/simplify/) | Simplify and refine recently modified code for clarity and consistency. |
 | [`technical-writing`](./skills/technical-writing/) | Write clean, terse technical docs — commits, issues, PRDs, specs, and technical communication |
-| [`typescript`](./skills/typescript/) | Write clean, pragmatically functional TypeScript — simple, composable, soundly typed |
+| [`type-system-discipline`](./skills/type-system-discipline/) | Make the compiler reject impossible states, mixed-up primitives, and unhandled variants, and parse external data once at system boundaries. |
+| [`typescript-best-practices`](./skills/typescript-best-practices/) | TypeScript best practices: simple, composable, soundly typed code, with rules for unions, branded types, parsing, narrowing, casts, exhaustiveness, errors, and the TS 6/7 compiler baseline. |
 | [`typescript-refactoring`](./skills/typescript-refactoring/) | Systematically refactor TypeScript codebases for readability, type safety, and AI-friendliness. |
 <!-- skills-end -->
 

@@ -128,7 +128,7 @@ type HttpMethod = typeof HttpMethod[keyof typeof HttpMethod]
 ```
 
 **Advantages over enums:**
-- Zero runtime overhead (enums emit code)
+- Plain object at runtime; no enum-specific emit or reverse mappings
 - Works with `--erasableSyntaxOnly`
 - Tree-shakeable
 - Structural typing (no need to import the enum to pass a valid value)

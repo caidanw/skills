@@ -1,12 +1,34 @@
 ---
-name: typescript
-description: "Write clean, pragmatically functional TypeScript — simple, composable, soundly typed"
+name: typescript-best-practices
+description: "TypeScript best practices: simple, composable, soundly typed code, with rules for unions, branded types, parsing, narrowing, casts, exhaustiveness, errors, and the TS 6/7 compiler baseline. Use when reading or editing .ts or .tsx files, reviewing TypeScript, or deciding how to model types, errors, and modules in TypeScript."
 globs: ["*.ts", "*.tsx", "*.mts", "*.cts"]
 ---
 
-# Pragmatic TypeScript
+# TypeScript Best Practices
 
 Write TypeScript that is **simple, clear, composable, and soundly typed**. Use the good parts of functional style — small functions, higher-order functions, discriminated unions, composition — without dogma. Mutate when it's simpler. Be explicit, not clever. Prioritize readability over density.
+
+## Rules at a Glance
+
+The language-agnostic type rules (illegal states, branding, parsing at boundaries, exhaustiveness) live in the **type-system-discipline** skill. The TypeScript form of each is below. Code for every row: [references/rule-examples.md](references/rule-examples.md).
+
+| Rule | Summary |
+|------|---------|
+| Discriminated unions | Model variants with one literal discriminant (`kind`) so impossible states can't be represented. No optional-field bags. |
+| Branded types | Brand primitives with `& { readonly __brand: "X" }` so they can't be mixed up. Validate once at the boundary. |
+| Constructive modeling | Build the shape so the illegal value can't be constructed: `[T, ...T[]]` for non-empty, `[T, T][]` for pairs, `start` plus `duration` for a range. |
+| Simplest total type | Keep `T[]` while every operation on it stays total. Strengthen to `NonEmpty<T>` only where the loose type forces `!`, a cast, or a "should never happen" throw. |
+| `unknown` over `any` | External data is `unknown` until parsed. |
+| Schemas before guards | Before hand-writing a property-by-property type guard, use the repo's schema library and infer the type from the schema (`z.infer`). Don't add a schema dependency for one guard. |
+| No `as` casts | Every `as` is a runtime crash waiting. Cast only after validation. Annotate a validator with the type it proves (`z.ZodType<User>`). |
+| Narrowing order | Discriminant switch > `in` > `typeof`/`instanceof` > user-defined type guard > `as`. |
+| Honest type guards | A guard must verify its claim. A lying guard is worse than `as`, because the bug hides behind a name that says it's safe. Name them `isX` or `hasX`. |
+| Exhaustiveness | `const _exhaustive: never = x` (or `assertNever(x)`) in default arms, so a new variant is a compile error. |
+| `satisfies` over `as` | Validates the value without widening literal types. |
+| Schema-derived types | Reach for `Pick`, `Omit`, `Parameters`, `ReturnType`, `Awaited`, `typeof`, or generated types before declaring a parallel interface. |
+| Object args | Pass one object instead of several same-typed positional args, so order is self-documenting. Skip on hot paths (render loops, tokenizers, parsers). |
+| Real tests | Don't mock what you can run. Verify UI in a running build. See the **behavioral-testing** skill. |
+| Structured telemetry | Use the project's structured logger with enough context to debug from an id. No `console.log` in shipped code. |
 
 ## 1. Simple and Clear
 
@@ -161,59 +183,13 @@ Use this for: request states, auth states, form steps, permissions, payment stat
 
 ## 6. Parse at the Boundary
 
-Validate and parse data when it enters your system. After that, trust the types. Don't scatter validation checks through business logic.
+Parse untrusted data once, where it enters the system (request bodies, env, files, `JSON.parse`), into precise types. After that, trust the types instead of re-checking.
 
-```ts
-// Parse once at the boundary
-function parseUser(data: unknown): User {
-  if (!isObject(data)) throw new ParseError("expected object")
-  const name = parseString(data.name, "name")
-  const email = parseEmail(data.email)
-  const age = parseAge(data.age)
-  return { name, email, age }
-}
+- **Strengthen inputs, don't weaken outputs.** Require `[T, ...T[]]` instead of accepting `T[]` and returning `T | undefined`.
+- **Brand what structure can't express.** `type UserId = string & { readonly __brand: "UserId" }`, created only by a parsing function.
+- Use the project's schema library (Zod, Valibot, ArkType) for external data if it has one.
 
-// Business logic trusts the types — no re-validation
-function greetUser(user: User): string {
-  return `Hello, ${user.name}!`
-}
-```
-
-**Strengthen inputs, don't weaken outputs.** If a function needs a non-empty array, require `[T, ...T[]]` instead of accepting `T[]` and returning `T | undefined`.
-
-```ts
-// Prefer this — caller proves the precondition
-function first<T>(list: [T, ...T[]]): T {
-  return list[0]
-}
-
-// Over this — pushes uncertainty downstream
-function first<T>(list: T[]): T | undefined {
-  return list[0]
-}
-```
-
-### Branded Types
-
-When you can't make an illegal state structurally impossible, use branded types with constructors:
-
-```ts
-type EmailAddress = string & { readonly __brand: "EmailAddress" }
-type UserId = string & { readonly __brand: "UserId" }
-
-function EmailAddress(input: string): EmailAddress {
-  if (!input.includes("@")) throw new Error(`Invalid email: ${input}`)
-  return input as EmailAddress
-}
-
-function UserId(input: string): UserId {
-  if (!input.trim()) throw new Error("UserId cannot be empty")
-  return input as UserId
-}
-
-// Now these are distinct types — can't accidentally swap them
-function sendEmail(to: EmailAddress, body: string): void { /* ... */ }
-```
+The full treatment (smart constructors, shotgun parsing, boundary discipline, review checklist) is in the **type-system-discipline** skill.
 
 ## 7. Types: Precise but Simple
 
@@ -366,19 +342,7 @@ try {
 }
 ```
 
-Use Result types for expected failures (Section 9 above). Use `throw` for truly unexpected errors. Don't mix — pick one strategy per boundary.
-
-### Resolvable Values
-
-One type for lazy/async/sync values — useful for config, subcommands, anything expensive:
-
-```ts
-type Resolvable<T> = T | Promise<T> | (() => T) | (() => Promise<T>)
-
-async function resolve<T>(input: Resolvable<T>): Promise<T> {
-  return typeof input === "function" ? (input as Function)() : input
-}
-```
+Use Result types for expected failures (above). Use `throw` for truly unexpected errors. Don't mix — pick one strategy per boundary.
 
 ## 10. Common Gotchas
 
@@ -393,7 +357,7 @@ Concrete pitfalls that cause runtime bugs despite passing type checks:
 
 ## What NOT to Do
 
-- **No `enum`** — use union types or `as const` objects. Enums emit runtime code (non-erasable syntax), break Node's native TS support, and conflict with the "types as comments" future. TS 5.8's `--erasableSyntaxOnly` flag officially marks them as discouraged.
+- **No `enum`** — use union types or `as const` objects. Enums are non-erasable syntax: Node's type stripping rejects them, and `--erasableSyntaxOnly` turns them into errors.
 - **No `namespace`** — use modules. Also non-erasable.
 - **No `I` prefix on interfaces** — just name the thing.
 - **No FP ceremony or jargon** — no monads, functors, or applicatives by name. But use practical FP patterns: Result types, pipe composition, exhaustive matching (see `ts-pattern`).
@@ -401,13 +365,13 @@ Concrete pitfalls that cause runtime bugs despite passing type checks:
 - **No `any`** — use `unknown` and narrow, or fix the type.
 - **No barrel files with circular re-exports** — they explode module graphs, kill tree-shaking, and slow bundlers/test runners. One barrel at a package root is fine; barrels in every subdirectory are not.
 - **No npm packages for 10 lines of code** — inline tiny utils. (Zod, Hono, ts-pattern all ship zero dependencies.)
-- **No unsanitized user input** in SQL queries, HTML output, shell commands, or file paths. AI-generated code contains security vulnerabilities ~40% of the time. Validate and sanitize at every system boundary.
+- **No unsanitized user input** in SQL queries, HTML output, shell commands, or file paths. Use parameterized queries, escaping, and argument arrays at every boundary.
 
 ## Style
 
 - `const` everywhere. `let` only for genuine reassignment.
 - `type` by default. `interface` only for `extends`. (See Section 7.)
-- Declare return types on top-level exported functions — helps AI assistants, compilation performance, and API clarity. Skip for JSX components.
+- Declare return types on top-level exported functions — documents the contract, speeds up `.d.ts` emit, and is required by `isolatedDeclarations`. Skip for JSX components.
 - Destructure in params when it helps: `({ id, name }: User) => ...`
 - Optional chaining and nullish coalescing: `user?.address?.city ?? "Unknown"`
 - `function` keyword for named, exported functions. Arrows for inline callbacks and short helpers.
@@ -416,8 +380,17 @@ Concrete pitfalls that cause runtime bugs despite passing type checks:
 - `as const` to preserve literal types.
 - `satisfies` to validate shape while preserving inference.
 - Enable `noUncheckedIndexedAccess` — makes array/object index access return `T | undefined`, catching unsafe assumptions like `arr[0]` or `env.NODE_ENV`.
-- Consider `--erasableSyntaxOnly` — disables enums, namespaces, and parameter properties. Aligns with Node's native TS support and the "types as comments" TC39 proposal.
+- Enable `erasableSyntaxOnly` and `verbatimModuleSyntax` — disables enums, namespaces, and parameter properties, and forces `import type`. Code then runs under Node's type stripping (`node file.ts`).
 
-For modern TypeScript features (`using`, `NoInfer`, `const` type params), see [references/modern-features.md](references/modern-features.md).
+## Compiler Baseline (TS 6 / TS 7)
+
+TS 6.0 changed defaults and TS 7.0 (the native Go compiler) removes the deprecated options:
+
+- `strict` is on by default. Keep `noUncheckedIndexedAccess` on as well.
+- `types` defaults to `[]`. List what you need, e.g. `"types": ["node"]`.
+- Removed: `baseUrl` (put prefixes in `paths`), `moduleResolution: "node"`/`"node10"` (use `bundler` or `nodenext`), `target: "es5"`, `outFile`, import `assert { }` (use `with { }`).
+- TS 7's `typescript` package has no programmatic compiler API. Tools that import it need their TS 7 support.
+
+For modern TypeScript features (`using`, `NoInfer`, `const` type params, TS 6 additions), see [references/modern-features.md](references/modern-features.md).
 For compilation performance tips, see [references/performance.md](references/performance.md).
 For patterns from top codebases (Zod, tRPC, Hono, TanStack), see [references/patterns-in-the-wild.md](references/patterns-in-the-wild.md).

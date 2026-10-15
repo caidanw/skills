@@ -32,6 +32,7 @@ npx skills add caidanw/skills@<skill-name>
 | [`benchmark-checklist`](./skills/benchmark-checklist/) | Vet a perf measurement (limiter, tuning, limits, errors, repeatability, relevance, and whether the work happened) before you report or act on it. |
 | [`blast-radius`](./skills/blast-radius/) | Find what a change could break somewhere else before it ships, beyond the diff, and prove the one fact it's safe because of by running real code instead of writing it up. |
 | [`bro`](./skills/bro/) | Restate the last message in plain human language, with no jargon. |
+| [`caidan-mode`](./skills/caidan-mode/) | Caidan's agent style for concise, detailed responses, deliberate subagents, unslopped prose, simple code, and verified work. |
 | [`clear-communication`](./skills/clear-communication/) | Use clear, natural, reader-centered language for all agent communication. |
 | [`code-comments`](./skills/code-comments/) | Write high-signal code comments for humans and coding agents. |
 | [`correct`](./skills/correct/) | Find the mistakes agents keep repeating in this repo and make each one impossible. |

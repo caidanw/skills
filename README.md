@@ -20,6 +20,14 @@ To install a specific skill:
 npx skills add caidanw/skills@<skill-name>
 ```
 
+To try this repo's skills in pi without installing them or touching your installed skills, run from any project:
+
+```bash
+~/path/to/skills/scripts/try-skills.sh [skill ...] [-- pi-args ...]
+```
+
+With no names it loads every skill in `skills/`. Skills load live from the repo, so run `/reload` after editing one.
+
 ## Available Skills
 
 <!-- skills-start -->

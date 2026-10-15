@@ -13,6 +13,19 @@ This file collects the sources behind `no-use-effect` and the key idea taken fro
   - Strong guidance on dependency honesty, avoiding stale closures, and refactoring code so the
     dependency list can stay complete.
 
+- React docs - `https://react.dev/learn/separating-events-from-effects` and
+  `https://react.dev/reference/react/useEffectEvent`
+  - `useEffectEvent` (stable in React 19.2) for non-reactive logic inside Effects, and its rules:
+    call only from Effects, never list in dependencies, never use it to hide a real dependency.
+
+- React docs - `https://react.dev/reference/react/useActionState` and
+  `https://react.dev/reference/react/use`
+  - React 19 Actions for form submission and `use(promise)` with Suspense for reading data.
+
+- React docs - `https://react.dev/reference/eslint-plugin-react-hooks`
+  - The `recommended` preset includes `exhaustive-deps` and compiler-backed rules such as
+    `set-state-in-effect`.
+
 - React docs - `https://react.dev/reference/react/useEffect`
   - API-level caveats for cleanup, client-only execution, and Strict Mode behavior.
 

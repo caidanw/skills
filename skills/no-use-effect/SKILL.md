@@ -2,12 +2,12 @@
 name: no-use-effect
 description: >-
   Prevent unnecessary React `useEffect` usage by steering code toward derived state,
-  event handlers, memoization, `key`-based resets, `useSyncExternalStore`, and
-  framework or query-library data APIs. Use when writing or reviewing React/Next.js
-  components, refactoring effect-heavy code, or when a change introduces `useEffect`,
-  `useLayoutEffect`, or dependency-array churn. Triggers on: "avoid useEffect",
+  event handlers and form Actions, `key`-based resets, `useSyncExternalStore`,
+  `useEffectEvent`, and framework or query-library data APIs. Use when writing or reviewing
+  React/Next.js components, refactoring effect-heavy code, or when a change introduces
+  `useEffect`, `useLayoutEffect`, or dependency-array churn. Triggers on: "avoid useEffect",
   "remove useEffect", "you might not need an effect", "effect dependencies",
-  "derived state", "React side effects".
+  "useEffectEvent", "derived state", "React side effects".
 ---
 
 # No useEffect
@@ -15,17 +15,16 @@ description: >-
 Treat raw `useEffect` as a last resort, not a default tool. Most component logic belongs in
 render, event handlers, framework data APIs, or narrower React primitives.
 
-This skill is based primarily on the React docs (`You Might Not Need an Effect`,
-`Synchronizing with Effects`, `Removing Effect Dependencies`), with supporting guidance from
-Dan Abramov, Kent C. Dodds, TkDodo, and team practices that ban or heavily restrict raw
-`useEffect`.
+This skill targets React 19.2+. It is based primarily on the React docs (`You Might Not Need an
+Effect`, `Synchronizing with Effects`, `Separating Events from Effects`, `Removing Effect
+Dependencies`), with supporting guidance from Dan Abramov, Kent C. Dodds, TkDodo, and team
+practices that ban or heavily restrict raw `useEffect`.
 
 ## Core Rule
 
 Before adding an Effect, answer this question:
 
-"What external system am I synchronizing with, and why can't this be done during render,
-in an event handler, or with a more specific primitive?"
+"What external system am I synchronizing with, and why can't this be done during render, in an event handler, or with a more specific primitive?"
 
 If you cannot name the external system, do not write the Effect.
 
@@ -72,6 +71,7 @@ const visibleTodos = useMemo(() => getVisibleTodos(todos, filter), [todos, filte
 ```
 
 First ask whether the work is actually expensive. If not, calculate it directly during render.
+If the project uses React Compiler, it memoizes this for you; skip the manual `useMemo`.
 
 ### 3. Put user actions in event handlers
 
@@ -94,6 +94,25 @@ async function handleSubmit() {
 
 Never build "set flag -> Effect notices flag -> Effect does the real work" flows unless the
 flag is synchronizing with a real external system.
+
+For form submissions, React 19 Actions replace both the Effect and most hand-rolled pending
+state. Pass a function to `<form action>`, and use `useActionState` when you need the result or
+a pending flag:
+
+```tsx
+const [error, submitAction, isPending] = useActionState<string | null, FormData>(async (_prev, formData) => {
+  const result = await saveForm(formData);
+  return result.ok ? null : result.error;
+}, null);
+
+return (
+  <form action={submitAction}>
+    {/* fields */}
+    <button disabled={isPending}>Save</button>
+    {error && <p role="alert">{error}</p>}
+  </form>
+);
+```
 
 ### 4. Reset identity with `key` when you want a fresh instance
 
@@ -219,10 +238,11 @@ Avoid raw fetch-in-Effect code in app components when a framework loader or quer
 available.
 
 Preferred order:
-1. framework data APIs (`Next.js`, `React Router`, Remix, server components, route loaders)
+1. framework data APIs (`Next.js`, `React Router`, server components, route loaders)
 2. data libraries (`TanStack Query`, `SWR`)
-3. a focused custom hook
-4. raw `useEffect` only if none of the above fit
+3. `use(promise)` inside a `Suspense` boundary, when the promise comes from a server component, loader, or cache. Do not create the promise during render in a client component; it is recreated every render.
+4. a focused custom hook
+5. raw `useEffect` only if none of the above fit
 
 If you must fetch in an Effect, handle cleanup so stale responses are ignored.
 
@@ -248,7 +268,43 @@ useEffect(() => {
 }, [query]);
 ```
 
-### 8. Encapsulate unavoidable imperative synchronization
+### 8. Move non-reactive logic into `useEffectEvent`
+
+When an Effect must read a value but should not re-run when that value changes, put that read in
+an Effect Event. It always sees the latest props and state and stays out of the dependency list.
+This replaces the "latest ref" pattern (`callbackRef.current = callback`) and
+`eslint-disable` on the dependency array.
+
+```tsx
+// Bad: changing theme reconnects the chat
+useEffect(() => {
+  const connection = createConnection(roomId);
+  connection.on("connected", () => showNotification("Connected!", theme));
+  connection.connect();
+  return () => connection.disconnect();
+}, [roomId, theme]);
+
+// Good: only roomId re-synchronizes
+const onConnected = useEffectEvent(() => {
+  showNotification("Connected!", theme);
+});
+
+useEffect(() => {
+  const connection = createConnection(roomId);
+  connection.on("connected", onConnected);
+  connection.connect();
+  return () => connection.disconnect();
+}, [roomId]);
+```
+
+Rules from the React docs:
+- Call Effect Events only from Effects or other Effect Events. Never during render, from event
+  handlers, or passed to children or other Hooks.
+- Never list them in a dependency array. Their identity changes every render on purpose.
+- Do not use them to hide a dependency that should re-run the Effect. If a value change should
+  re-synchronize, keep it as a dependency.
+
+### 9. Encapsulate unavoidable imperative synchronization
 
 Sometimes an Effect is correct: sockets, observers, widgets, media controls, focus management,
 layout measurement, or DOM APIs that must stay in sync with rendered output.
@@ -292,6 +348,8 @@ Treat these as red flags during authoring or review:
 - Effect only exists to call a function after a button click
 - effect chains where one state update triggers another Effect and another render
 - dependency arrays fought with `eslint-disable`, refs-as-flags, or intentionally stale closures
+  (use `useEffectEvent` for the non-reactive part)
+- synchronous `setState` at the top of an Effect (flagged by `react-hooks/set-state-in-effect`)
 - object or function dependencies recreated every render without need
 - child component fetching data and pushing it upward in an Effect
 - mount-only initialization that should live in module scope, entrypoints, or framework boot code
@@ -300,9 +358,9 @@ Treat these as red flags during authoring or review:
 
 Before accepting a new Effect, verify all of these:
 - [ ] The code synchronizes with a real external system
-- [ ] Derived render data, memoization, events, `key`, lifted state, and `useSyncExternalStore`
-      were all considered first
-- [ ] The dependency list is honest and complete
+- [ ] Derived render data, memoization, events and Actions, `key`, lifted state, and
+      `useSyncExternalStore` were all considered first
+- [ ] The dependency list is honest and complete; non-reactive reads live in `useEffectEvent`
 - [ ] Setup and cleanup are symmetrical
 - [ ] The Effect is idempotent under Strict Mode re-mounting
 - [ ] Data fetching is not bypassing an existing framework or query abstraction
@@ -317,7 +375,9 @@ For teams trying to ban or heavily restrict raw `useEffect`, use this policy:
 3. Route data loading through the framework or an approved query library.
 4. If an Effect is still necessary, hide it behind a narrowly named custom hook or document the
    external system and cleanup explicitly in review.
-5. Never silence `react-hooks/exhaustive-deps` to "make it work".
+5. Enable the `recommended` preset of `eslint-plugin-react-hooks`. It includes
+   `exhaustive-deps` and the compiler-backed rules such as `set-state-in-effect`.
+6. Never silence `react-hooks/exhaustive-deps` to "make it work".
 
 ## References
 

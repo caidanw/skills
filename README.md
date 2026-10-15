@@ -35,7 +35,7 @@ npx skills add caidanw/skills@<skill-name>
 | [`lean-ts-patterns`](./skills/lean-ts-patterns/) | Build lightweight TypeScript tools and libraries with few or no dependencies. |
 | [`macos-swift-desktop`](./skills/macos-swift-desktop/) | Build native macOS desktop applications in Swift using AppKit and SwiftUI. |
 | [`modern-css`](./skills/modern-css/) | Write modern CSS using native features instead of legacy hacks, workarounds, and JavaScript. |
-| [`no-use-effect`](./skills/no-use-effect/) | Prevent unnecessary React `useEffect` usage by steering code toward derived state, event handlers, memoization, `key`-based resets, `useSyncExternalStore`, and framework or query-library data APIs. |
+| [`no-use-effect`](./skills/no-use-effect/) | Prevent unnecessary React `useEffect` usage by steering code toward derived state, event handlers and form Actions, `key`-based resets, `useSyncExternalStore`, `useEffectEvent`, and framework or query-library data APIs. |
 | [`simplify`](./skills/simplify/) | Simplify and refine recently modified code for clarity and consistency. |
 | [`technical-writing`](./skills/technical-writing/) | Write clean, terse technical docs — commits, issues, PRDs, specs, and technical communication |
 | [`type-system-discipline`](./skills/type-system-discipline/) | Make the compiler reject impossible states, mixed-up primitives, and unhandled variants, and parse external data once at system boundaries. |

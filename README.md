@@ -40,7 +40,7 @@ npx skills add caidanw/skills@<skill-name>
 | [`technical-writing`](./skills/technical-writing/) | Write clean, terse technical docs — commits, issues, PRDs, specs, and technical communication |
 | [`type-system-discipline`](./skills/type-system-discipline/) | Make the compiler reject impossible states, mixed-up primitives, and unhandled variants, and parse external data once at system boundaries. |
 | [`typescript-best-practices`](./skills/typescript-best-practices/) | TypeScript best practices: simple, composable, soundly typed code, with rules for unions, branded types, parsing, narrowing, casts, exhaustiveness, errors, and the TS 6/7 compiler baseline. |
-| [`typescript-refactoring`](./skills/typescript-refactoring/) | Systematically refactor TypeScript codebases for readability, type safety, and AI-friendliness. |
+| [`typescript-refactoring`](./skills/typescript-refactoring/) | Systematically refactor TypeScript codebases for readability and type safety. |
 <!-- skills-end -->
 
 ## Creating a Skill

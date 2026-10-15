@@ -210,7 +210,7 @@ enum Status { Active, Inactive, Pending }
 type Status = "active" | "inactive" | "pending"
 ```
 
-**Why:** Enums emit runtime code, break `--erasableSyntaxOnly`, and are incompatible with Node's native TypeScript support. See the `typescript` skill for details.
+**Why:** Enums emit runtime code, break `--erasableSyntaxOnly`, and are incompatible with Node's native TypeScript support. See the `typescript-best-practices` skill for details.
 
 ### Boolean Soup
 
@@ -225,7 +225,7 @@ type RequestState = {
 // Can isLoading AND isError both be true? What does that mean?
 ```
 
-**Fix:** Discriminated union. See the `typescript` skill, Section 5.
+**Fix:** Discriminated union. See the `typescript-best-practices` skill, Section 5.
 
 ### Barrel File Chains
 
@@ -249,7 +249,7 @@ class UserValidator {
 // new UserValidator().validate(user) — why not just validateUser(user)?
 ```
 
-**When classes ARE appropriate:** Wrapping resources, fluent/chainable APIs, `Disposable` objects. See the `typescript` skill, Section 8.
+**When classes ARE appropriate:** Wrapping resources, fluent/chainable APIs, `Disposable` objects. See the `typescript-best-practices` skill, Section 8.
 
 ### Namespace Usage
 

@@ -1,8 +1,8 @@
 ---
 name: typescript-refactoring
 description: >-
-  Systematically refactor TypeScript codebases for readability, type safety,
-  and AI-friendliness. Use when asked to "refactor this", "clean up this code",
+  Systematically refactor TypeScript codebases for readability and type
+  safety. Use when asked to "refactor this", "clean up this code",
   "make this codebase better", "improve code quality", or when inheriting a
   messy TypeScript project. Covers assessment, prioritization, and safe
   incremental transformation.
@@ -13,7 +13,7 @@ globs: ["*.ts", "*.tsx", "*.mts", "*.cts"]
 
 # TypeScript Refactoring
 
-Refactoring is changing structure without changing behavior. Assess before changing. Small steps, verified continuously. The `typescript` skill defines what good TypeScript looks like — this skill defines how to get there from messy code.
+Refactoring is changing structure without changing behavior. Assess before changing. Small steps, verified continuously. The `typescript-best-practices` skill defines what good TypeScript looks like — this skill defines how to get there from messy code.
 
 ## 1. The Iron Rules
 
@@ -85,7 +85,7 @@ Remove unused imports, exports, unreachable branches, commented-out code. Less c
 Rename unclear variables, functions, and files to reveal intent. This is the single biggest readability win. `data` → `userProfile`, `res` → `apiResponse`, `handle` → `handlePaymentWebhook`.
 
 ### Level 4: Structure
-Extract functions from long bodies. Split God files. Flatten deep nesting with early returns and guard clauses. Target: functions under 20 lines, files under 300 lines, nesting under 3 levels.
+Extract functions from long bodies. Split God files. Flatten deep nesting with early returns and guard clauses. Investigate functions over ~50 lines, files over ~500, and nesting of 4+ levels, but split only where a nameable concept falls out. Line counts are smoke detectors, not targets.
 
 ### Level 5: Patterns
 Migrate anti-patterns to modern TypeScript: enums → union types, classes → factory functions (where appropriate), boolean soup → discriminated unions, barrel file chains → direct imports.
@@ -115,8 +115,8 @@ For each refactoring, follow this loop:
 4. Migrate remaining callers incrementally
 5. Delete old implementation when all callers migrated
 
-**For large migrations** (e.g., enabling `strict: true` on a non-strict codebase):
-1. Enable the flag
+**For large migrations** (e.g., moving a non-strict codebase to TS 6+, where `strict` is on by default):
+1. Enable the flag (or upgrade, then set the failing sub-flags to `false` and ratchet them on one at a time)
 2. Fix errors file-by-file, starting with leaf modules (no dependents)
 3. Work inward toward the core
 4. Commit after each file or small group of files
@@ -130,25 +130,15 @@ refactor: migrate Status enum to union type
 chore: remove 12 unused imports in src/utils/
 ```
 
-## 5. What Makes Code AI-Friendly
+## 5. What Makes Code Easy to Change (for Humans and Agents)
 
-AI agents read code to understand it, then generate new code that fits. These patterns directly improve both capabilities:
-
-**Explicit types reduce guessing.** When a function has `): Promise<User | null>`, the AI knows exactly what it returns. Without it, the AI must infer — and may infer wrong.
-
-**Descriptive names communicate intent.** AI agents infer purpose from names more than humans realize. `getUserById` tells the AI everything. `get` tells it nothing. Rename aggressively.
-
-**Small functions fit in context windows.** AI agents have limited context. A 200-line function forces the AI to hold all of it in memory. Five 20-line functions let the AI focus on the relevant one.
-
-**Flat control flow is easier to trace.** Deeply nested `if/else/try/catch` blocks confuse AI agents the same way they confuse humans. Early returns, guard clauses, and extracted conditions keep the happy path obvious.
-
-**Consistent patterns teach by example.** If every API handler follows the same shape — validate input, call service, return response — the AI learns the pattern and replicates it correctly. Inconsistency forces the AI to guess which pattern to follow.
-
-**Types replace comments.** A type like `EmailAddress` (branded type) or `AsyncState<T>` (discriminated union) communicates more than any comment. Types are verified by the compiler; comments rot.
-
-**Strict tsconfig catches AI mistakes.** Enable `strict: true` and `noUncheckedIndexedAccess: true`. These flags catch the most common AI-generated bugs: unsafe index access, missing null checks, implicit `any`.
-
-**Colocated code reduces jumping.** When types, utilities, and components live in the same directory, AI agents find them faster. Scattered code across distant directories increases the chance the AI misses context.
+- **Explicit types on boundaries.** `Promise<User | null>` states the contract; nobody has to infer it.
+- **Names that state intent.** `getUserById` over `get`. Agents and humans both search by name.
+- **Flat control flow.** Early returns and guard clauses keep the happy path visible.
+- **Consistent patterns.** If every handler has the same shape, new code copies the right shape. Inconsistency gets copied too.
+- **Types over comments.** `EmailAddress` or `AsyncState<T>` is checked by the compiler; comments rot.
+- **Strict compiler settings.** `strict` and `noUncheckedIndexedAccess` catch unsafe index access, missing null checks, and implicit `any`, the most common bugs in generated code.
+- **Colocation.** Types, helpers, and tests next to the code that uses them are found without searching.
 
 ## 6. What NOT to Do While Refactoring
 
@@ -161,10 +151,10 @@ AI agents read code to understand it, then generate new code that fits. These pa
 
 ## Companion Skills
 
-- **`typescript`** — the target state. What good TypeScript looks like. Reference this for specific patterns (discriminated unions, branded types, factory functions, etc.)
-- **`karpathy-guidelines`** — behavioral constraints. Think before coding, simplicity first, surgical changes, goal-driven execution.
-- **`agent-first-repo`** — repo-level improvements. AGENTS.md, ARCHITECTURE.md, documentation structure, mechanical enforcement of architecture.
-- **`systematic-debugging`** — when refactoring reveals bugs. Follow root-cause investigation, don't patch symptoms.
+- **`typescript-best-practices`** — the target state. What good TypeScript looks like (discriminated unions, branded types, factory functions).
+- **`type-system-discipline`** — Level 6 in depth: parsing at boundaries, making illegal states unrepresentable.
+- **`simplify`** — behavior-preserving cleanup of a specific change.
+- **`agents-md`** — encode the conventions you settle on so agents keep following them.
 
 For the full smell catalog, see [references/smell-catalog.md](references/smell-catalog.md).
 For step-by-step transformation recipes, see [references/transformation-playbook.md](references/transformation-playbook.md).

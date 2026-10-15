@@ -1,11 +1,14 @@
 # CLI Patterns
 
-Patterns for building lightweight CLI tools. Derived from unjs/citty (734 lines total).
+Patterns for building lightweight CLI tools. Derived from unjs/citty, rebuilt on `node:util.parseArgs`.
 
 ## Architecture: Two-Layer Parser
 
-**Layer 1 (raw):** Wrap `node:util.parseArgs` -- handles `--no-` negation, alias propagation.
-**Layer 2 (semantic):** Add typed args (positional, string, boolean, enum), validation, defaults.
+**Layer 1 (raw):** `node:util.parseArgs` handles flags, short aliases, defaults, and `--no-` negation
+(`allowNegative`, Node 22.4+). With `strict: true` it rejects unknown flags.
+**Layer 2 (semantic):** Add positionals by name, enums, and required checks on top.
+
+Note: citty itself vendors a minimist-style parser. This version uses the built-in instead.
 
 ```ts
 import { parseArgs as nodeParseArgs } from "node:util";
@@ -14,49 +17,42 @@ interface ArgDef {
   type: "positional" | "string" | "boolean" | "enum";
   description?: string;
   required?: boolean;
-  default?: any;
-  alias?: string | string[];
+  default?: string | boolean;
+  alias?: string; // single-character short flag
   options?: string[]; // for enum
 }
 
 type ArgsDef = Record<string, ArgDef>;
 
 function parseArgs(rawArgs: string[], argsDef: ArgsDef) {
-  const parseOpts = { boolean: [] as string[], string: [] as string[],
-    alias: {} as Record<string, string[]>, default: {} as Record<string, any> };
-
+  const options: Record<string, { type: "string" | "boolean"; short?: string; default?: string | boolean }> = {};
   for (const [name, arg] of Object.entries(argsDef)) {
     if (arg.type === "positional") continue;
-    if (arg.type === "boolean") parseOpts.boolean.push(name);
-    else parseOpts.string.push(name);
-    if (arg.default !== undefined) parseOpts.default[name] = arg.default;
-    if (arg.alias) parseOpts.alias[name] = Array.isArray(arg.alias) ? arg.alias : [arg.alias];
+    // node:util.parseArgs rejects keys set to undefined, so only add what is defined.
+    options[name] = { type: arg.type === "boolean" ? "boolean" : "string" };
+    if (arg.alias) options[name].short = arg.alias;
+    if (arg.default !== undefined) options[name].default = arg.default;
   }
 
   const { values, positionals } = nodeParseArgs({
-    args: rawArgs, options: parseOpts, allowPositionals: true, strict: false,
+    args: rawArgs, options, allowPositionals: true, allowNegative: true, strict: true,
   });
+  const result: Record<string, unknown> = { ...values };
 
   // Map positionals by definition order
   const positionalDefs = Object.entries(argsDef).filter(([, a]) => a.type === "positional");
-  for (let i = 0; i < positionalDefs.length; i++) {
-    const [name, def] = positionalDefs[i];
-    if (positionals[i] !== undefined) values[name] = positionals[i];
+  positionalDefs.forEach(([name, def], i) => {
+    if (positionals[i] !== undefined) result[name] = positionals[i];
     else if (def.required !== false) throw new Error(`Missing required: ${name.toUpperCase()}`);
-    else values[name] = def.default;
-  }
+    else result[name] = def.default;
+  });
 
-  // Validate enums
   for (const [name, arg] of Object.entries(argsDef)) {
-    if (arg.type === "enum" && values[name] !== undefined && arg.options?.length) {
-      if (!arg.options.includes(values[name] as string))
-        throw new Error(`Invalid --${name}: expected one of ${arg.options.join(", ")}`);
-    }
-    if (arg.required && values[name] === undefined)
-      throw new Error(`Missing required: --${name}`);
+    if (arg.type === "enum" && result[name] !== undefined && !arg.options?.includes(result[name] as string))
+      throw new Error(`Invalid --${name}: expected one of ${arg.options?.join(", ")}`);
+    if (arg.required && result[name] === undefined) throw new Error(`Missing required: --${name}`);
   }
-
-  return values;
+  return result;
 }
 ```
 
@@ -186,7 +182,7 @@ async function runMain(cmd: CommandDef) {
 ## Key Patterns
 
 - **Positionals default to required**, named args to optional -- matches user expectations
-- **`--no-` prefix negation**: Preprocess `--no-verbose` to set `verbose = false`
+- **`--no-` prefix negation**: `allowNegative: true` turns `--no-verbose` into `verbose: false`
 - **Lifecycle hooks**: `setup` -> `run` -> `cleanup` (cleanup in `finally` block)
 - **User-facing errors show help**, internal errors show raw error
 - **Underscore-prefixed files** (`_parser.ts`, `_utils.ts`) = internal, not exported

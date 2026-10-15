@@ -32,7 +32,7 @@ npx skills add caidanw/skills@<skill-name>
 | [`code-comments`](./skills/code-comments/) | Write high-signal code comments for humans and coding agents. |
 | [`design-system`](./skills/design-system/) | Build design system components and UI that are accessible, themeable, and visually polished. |
 | [`distill-to-skill`](./skills/distill-to-skill/) | Distill knowledge from any source — blog posts, articles, documentation, GitHub repos, video transcripts, books, papers — into a well-structured agent skill. |
-| [`lean-ts-patterns`](./skills/lean-ts-patterns/) | Patterns for building lightweight, zero-dependency TypeScript tools and libraries. |
+| [`lean-ts-patterns`](./skills/lean-ts-patterns/) | Build lightweight TypeScript tools and libraries with few or no dependencies. |
 | [`macos-swift-desktop`](./skills/macos-swift-desktop/) | Build native macOS desktop applications in Swift using AppKit and SwiftUI. |
 | [`modern-css`](./skills/modern-css/) | Teaches agents to write modern CSS using native features instead of legacy hacks, workarounds, and JavaScript. |
 | [`no-use-effect`](./skills/no-use-effect/) | Prevent unnecessary React `useEffect` usage by steering code toward derived state, event handlers, memoization, `key`-based resets, `useSyncExternalStore`, and framework or query-library data APIs. |

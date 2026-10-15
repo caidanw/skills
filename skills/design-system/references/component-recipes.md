@@ -55,7 +55,7 @@ type DialogProps = {
 3. On close: restore focus to the trigger element
 
 **Styling notes:**
-- Render into a portal (outside component tree)
+- Native `<dialog>` with `showModal()` renders in the top layer, so no portal is needed; for a `<div role="dialog">`, render into a portal
 - Overlay: semi-transparent background, prevent body scroll
 - Animate entry with opacity + `transform: scale(0.95)` → `scale(1)`
 

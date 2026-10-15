@@ -30,7 +30,7 @@ npx skills add caidanw/skills@<skill-name>
 | [`behavioral-testing`](./skills/behavioral-testing/) | Behavioral testing methodology — test what users experience, not how code is structured. |
 | [`clear-communication`](./skills/clear-communication/) | Use clear, natural, reader-centered language for all agent communication. |
 | [`code-comments`](./skills/code-comments/) | Write high-signal code comments for humans and coding agents. |
-| [`design-system`](./skills/design-system/) | Build design system components and UI that are accessible, themeable, and visually polished. |
+| [`design-system`](./skills/design-system/) | Build design system components and UI that are accessible, themeable, and visually consistent. |
 | [`distill-to-skill`](./skills/distill-to-skill/) | Distill knowledge from any source — blog posts, articles, documentation, GitHub repos, video transcripts, books, papers — into a well-structured agent skill. |
 | [`lean-ts-patterns`](./skills/lean-ts-patterns/) | Build lightweight TypeScript tools and libraries with few or no dependencies. |
 | [`macos-swift-desktop`](./skills/macos-swift-desktop/) | Build native macOS desktop applications in Swift using AppKit and SwiftUI. |

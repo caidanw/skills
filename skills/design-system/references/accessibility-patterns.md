@@ -30,7 +30,9 @@ button:focus-visible {
 
 ### Focus Trapping
 
-For modals, dialogs, and drawers. Tab must cycle within the container only:
+Prefer a native `<dialog>` opened with `showModal()`: the browser makes the rest of the page inert, so focus cannot leave, and Esc closes it. For other overlays, set the `inert` attribute on the background instead of trapping Tab by hand.
+
+Hand-rolled fallback, for containers where neither works. Tab must cycle within the container only:
 
 ```tsx
 function useFocusTrap(containerRef: React.RefObject<HTMLElement>, active: boolean) {

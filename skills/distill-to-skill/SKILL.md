@@ -6,16 +6,15 @@ description: >-
   shares a URL, article, repo, or body of knowledge and wants it turned into a reusable skill.
   Triggers on: "make a skill from this", "distill this into a skill", "create a skill from
   this article", "turn this repo into a skill", "extract patterns from", "convert to a skill".
-  This skill complements the `skill-creator` skill — skill-creator handles the mechanics
-  (frontmatter, packaging, init scripts), this skill handles the distillation process.
 ---
 
 # Distill to Skill
 
 Turn any source of knowledge into a well-structured agent skill. This is the process
-skill — it covers how to extract, filter, restructure, and encode knowledge. For the
-mechanical aspects of skill creation (directory structure, frontmatter format, validation,
-packaging), use the `skill-creator` skill. For writing craft that applies to any document an agent reads (pointers, progressive disclosure, pruning), use `writing-for-agents` if installed.
+skill — it covers how to extract, filter, restructure, and encode knowledge. The skill
+itself is a directory with a `SKILL.md` whose frontmatter has a `name` matching the directory
+and a `description` (Step 5 has the template). For writing craft that applies to any document
+an agent reads (pointers, progressive disclosure, pruning), use `writing-for-agents` if installed.
 
 ## The Distillation Mindset
 

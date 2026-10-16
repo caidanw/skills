@@ -21,7 +21,7 @@ Remaining triggers:
 - Parallel fan-out (coverage matrices, races, exploration partitions) → spawn parallel subagents per **Subagents**, one writer per worktree or branch.
 - Contested design → the **interrogate** skill (adversarial review from independent reviewers) before shipping.
 - Nontrivial multi-step → write the throughput checkpoint (Feature step 3).
-- Any prose surface, your reply to the user included → the **unslop** skill. Write the reply per **Writing the reply**. Agent-facing prose (skills, `AGENTS.md`) also follows your skill-authoring guide (`writing-for-agents` or `skill-creator` if installed).
+- Any prose surface, your reply to the user included → the **unslop** skill. Write the reply per **Writing the reply**. Agent-facing prose (skills, `AGENTS.md`) also follows the **writing-for-agents** skill if installed.
 - Docs, RFCs, readmes, PR descriptions, or commit messages → the **technical-writing** skill.
 - Before commit → the **simplify** skill over the diff.
 - Before review → the **code-comments** skill over the diff.

@@ -49,7 +49,7 @@ File each Backlog item to the team's backlog tracker without waiting. With no tr
 Follow each approved row's Routing exactly:
 
 - Trivial existing-skill edit (a one-line bullet, a tightened sentence, a stale fact corrected): the parent does it directly.
-- Substantive existing-skill edit (a new section, a new pattern table, more than ~10 lines): follow your skill-authoring guide (`writing-for-agents` or `skill-creator` if installed) and its draft / test / iterate loop.
+- Substantive existing-skill edit (a new section, a new pattern table, more than ~10 lines): follow the **writing-for-agents** skill if installed and its draft / test / iterate loop.
 - `tune description: <skill path>` (the skill exists but didn't trigger when it should have): rewrite the description per the same guide, then check it triggers on the prompt that missed.
 - `new skill: <kebab-name>`: create it with the same guide. Do not invent the shape ad hoc.
 

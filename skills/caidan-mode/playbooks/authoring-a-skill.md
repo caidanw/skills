@@ -2,7 +2,7 @@
 
 **You own the skill's voice.**
 
-1. Follow your skill-authoring guide (`writing-for-agents` or `skill-creator` if installed).
+1. Follow the **writing-for-agents** skill if installed, and the **distill-to-skill** skill when the skill comes from a source.
 2. Validate the skill: frontmatter has `name` and `description`, referenced files exist, cross-skill links resolve.
 3. Test cases if structural. Skip if subjective.
 4. Run **Opening a PR**.

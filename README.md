@@ -48,6 +48,7 @@ With no names it loads every skill in `skills/`. Skills load live from the repo,
 | [`design-system`](./skills/design-system/) | Build design system components and UI that are accessible, themeable, and visually consistent. |
 | [`distill-to-skill`](./skills/distill-to-skill/) | Distill knowledge from any source — blog posts, articles, documentation, GitHub repos, video transcripts, books, papers — into a well-structured agent skill. |
 | [`how`](./skills/how/) | Use for "how does X work", code walkthroughs before changing something, and placement / ownership / layering questions ("where should this live", "which package owns this", "is this the right layer"). |
+| [`improve-codebase-architecture`](./skills/improve-codebase-architecture/) | Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick. |
 | [`in-your-own-words`](./skills/in-your-own-words/) | Restate in your own words what you think the user's goals are and what problem they're trying to solve. |
 | [`interrogate`](./skills/interrogate/) | Use for "interrogate", "adversarial review", "multi-model review", "challenge this", "stress test this code", "find blind spots", or "tear this apart". |
 | [`ketchup`](./skills/ketchup/) | Catch the user up on what changed in this chat since their last message, in a few plain sentences and small visuals. |

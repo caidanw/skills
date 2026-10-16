@@ -23,7 +23,8 @@ Some skills in this repository are adapted from pstack
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
 
-The teach-me skill is adapted from mattpocock/skills
+The teach-me and improve-codebase-architecture skills (including the codebase-design
+references) are adapted from mattpocock/skills
 (https://github.com/mattpocock/skills), used under the MIT License:
 
   MIT License

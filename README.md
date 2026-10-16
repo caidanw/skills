@@ -62,6 +62,7 @@ With no names it loads every skill in `skills/`. Skills load live from the repo,
 | [`show-me-your-work`](./skills/show-me-your-work/) | Keep a reviewable decision trail for long-running or unattended work: a TSV log with one row per decision (what, why, evidence, result). |
 | [`simplify`](./skills/simplify/) | Simplify and refine recently modified code for clarity and consistency. |
 | [`teach`](./skills/teach/) | Explain a body of work plainly so a person actually understands it. |
+| [`teach-me`](./skills/teach-me/) | Teach the user a new skill or concept over multiple sessions, in a learning workspace of missions, lessons, references, and learning records. |
 | [`technical-writing`](./skills/technical-writing/) | Write and review technical docs, RFCs, design docs, readmes, PR descriptions, commit messages, issues, and PRDs. |
 | [`type-system-discipline`](./skills/type-system-discipline/) | Make the compiler reject impossible states, mixed-up primitives, and unhandled variants, and parse external data once at system boundaries. |
 | [`typescript-best-practices`](./skills/typescript-best-practices/) | TypeScript best practices: simple, composable, soundly typed code, with rules for unions, branded types, parsing, narrowing, casts, exhaustiveness, errors, and the TS 6/7 compiler baseline. |

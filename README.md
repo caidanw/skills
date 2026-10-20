@@ -45,8 +45,10 @@ With no names it loads every skill in `skills/`. Skills load live from the repo,
 | [`code-comments`](./skills/code-comments/) | Write high-signal code comments for humans and coding agents. |
 | [`correct`](./skills/correct/) | Find the mistakes agents keep repeating in this repo and make each one impossible. |
 | [`create-verification-skill`](./skills/create-verification-skill/) | Generate a project-local verification skill that drives your app the way a user does — any language, framework, or platform. |
+| [`dayplan`](./skills/dayplan/) | Plan the day from open tickets, PRs, and the last day plan into a day-plan file, or wrap up the day and set up tomorrow. |
 | [`design-system`](./skills/design-system/) | Build design system components and UI that are accessible, themeable, and visually consistent. |
 | [`distill-to-skill`](./skills/distill-to-skill/) | Distill knowledge from any source — blog posts, articles, documentation, GitHub repos, video transcripts, books, papers — into a well-structured agent skill. |
+| [`goal`](./skills/goal/) | Restate the goal in your own words, say what you are doing right now and why it serves that goal, and flag any drift. |
 | [`how`](./skills/how/) | Use for "how does X work", code walkthroughs before changing something, and placement / ownership / layering questions ("where should this live", "which package owns this", "is this the right layer"). |
 | [`improve-codebase-architecture`](./skills/improve-codebase-architecture/) | Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick. |
 | [`in-your-own-words`](./skills/in-your-own-words/) | Restate in your own words what you think the user's goals are and what problem they're trying to solve. |
@@ -57,9 +59,11 @@ With no names it loads every skill in `skills/`. Skills load live from the repo,
 | [`maintain-verification-skill`](./skills/maintain-verification-skill/) | Periodic pass that keeps a project's verification skill and feature map honest: parallel source readers per feature, one live session driving every feature, at most one PR of proven corrections. |
 | [`modern-css`](./skills/modern-css/) | Write modern CSS using native features instead of legacy hacks, workarounds, and JavaScript. |
 | [`no-use-effect`](./skills/no-use-effect/) | Prevent unnecessary React `useEffect` usage by steering code toward derived state, event handlers and form Actions, `key`-based resets, `useSyncExternalStore`, `useEffectEvent`, and framework or query-library data APIs. |
+| [`progress`](./skills/progress/) | Report progress against the current plan in plain English: on track or not, done, running, blocked, needs you, next. |
 | [`recall`](./skills/recall/) | Reconstruct your recent working context from your own chat history, live state, and the shared record (user reports, prior fixes, incidents), then hand back a tight current-state brief. |
 | [`reflect`](./skills/reflect/) | Spawn three parallel review subagents over the active transcript, surface learnings, and route each to a concrete edit on an existing skill. |
 | [`sharpen`](./skills/sharpen/) | Sharpen a task before starting: the expert approach, what the user is really after, and the right level of specification. |
+| [`ship`](./skills/ship/) | Commit the work logically, open the PR, and hand over the merge order as plain text. |
 | [`show-me-your-work`](./skills/show-me-your-work/) | Keep a reviewable decision trail for long-running or unattended work: a TSV log with one row per decision (what, why, evidence, result). |
 | [`simplify`](./skills/simplify/) | Simplify and refine recently modified code for clarity and consistency. |
 | [`teach`](./skills/teach/) | Explain a body of work plainly so a person actually understands it. |
@@ -69,6 +73,7 @@ With no names it loads every skill in `skills/`. Skills load live from the repo,
 | [`typescript-best-practices`](./skills/typescript-best-practices/) | TypeScript best practices: simple, composable, soundly typed code, with rules for unions, branded types, parsing, narrowing, casts, exhaustiveness, errors, and the TS 6/7 compiler baseline. |
 | [`typescript-refactoring`](./skills/typescript-refactoring/) | Systematically refactor TypeScript codebases for readability and type safety. |
 | [`unslop`](./skills/unslop/) | Cut AI tells from any writing. |
+| [`update-client`](./skills/update-client/) | Write a short, non-technical update the user can paste to their client: plain text, in the user's voice. |
 | [`why`](./skills/why/) | Use for 'why does X work this way', 'why we picked Y', design rationale, regressions, postmortems, or data-backed thresholds. |
 <!-- skills-end -->
 
